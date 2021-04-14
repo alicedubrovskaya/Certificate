@@ -1,0 +1,6 @@
+rootProject.name = 'Certificate'
+include 'api'
+include 'core'
+include 'api'
+include 'api'
+
