@@ -10,6 +10,9 @@ import com.epam.esm.service.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class TagServiceImpl implements TagService {
     private final DtoConverter<Tag, TagDto> dtoConverter;
@@ -44,5 +47,12 @@ public class TagServiceImpl implements TagService {
     public TagDto findById(Long id) {
         return dtoConverter.convert(tagRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND, id))));
+    }
+
+    @Override
+    public List<TagDto> read() {
+        return tagRepository.findAll().stream()
+                .map(dtoConverter::convert)
+                .collect(Collectors.toList());
     }
 }

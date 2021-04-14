@@ -1,19 +1,21 @@
 package com.epam.esm.service.service.impl;
 
-import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.service.TagService;
+import com.epam.esm.service.dto.CertificateDto;
+import com.epam.esm.service.service.CertificateService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class CertificateServiceImpl implements TagService {
+public class CertificateServiceImpl implements CertificateService {
 
     @Override
-    public TagDto create(TagDto entity) {
+    public CertificateDto create(CertificateDto entity) {
         return null;
     }
 
     @Override
-    public TagDto update(TagDto entity) {
+    public CertificateDto update(CertificateDto entity) {
         return null;
     }
 
@@ -23,7 +25,12 @@ public class CertificateServiceImpl implements TagService {
     }
 
     @Override
-    public TagDto findById(Long id) {
+    public CertificateDto findById(Long id) {
+        return null;
+    }
+
+    @Override
+    public List<CertificateDto> read(String tagName, String searchByName, String searchByDescription, String sortBy, String sortOrder) {
         return null;
     }
 }

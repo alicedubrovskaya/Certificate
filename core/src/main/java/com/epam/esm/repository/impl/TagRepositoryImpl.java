@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,6 +22,8 @@ public class TagRepositoryImpl implements TagRepository {
     private static final String CREATE_TAG = "INSERT INTO `tag` (`name`) VALUES (?)";
 
     private static final String READ_TAG_BY_ID = "SELECT `id`, `name` FROM `tag` WHERE `id` = ?";
+
+    private static final String READ_TAGS = "SELECT `id`, `name` FROM `tag`";
 
     private static final String DELETE_TAG = "DELETE FROM `tag` WHERE `id` = ?";
 
@@ -45,6 +48,11 @@ public class TagRepositoryImpl implements TagRepository {
     @Override
     public Optional<Tag> findById(Long id) {
         return jdbcTemplate.query(READ_TAG_BY_ID, tagMapper, id).stream().findAny();
+    }
+
+    @Override
+    public List<Tag> findAll() {
+        return jdbcTemplate.query(READ_TAGS, tagMapper);
     }
 
     @Override

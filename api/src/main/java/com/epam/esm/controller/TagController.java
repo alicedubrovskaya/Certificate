@@ -8,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/tags", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TagController {
@@ -29,6 +31,12 @@ public class TagController {
     public ResponseEntity<TagDto> getTag(@PathVariable("id") Long id) {
         TagDto tagDto = tagService.findById(id);
         return new ResponseEntity<>(tagDto, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<TagDto>> getTags() {
+        List<TagDto> tags = tagService.read();
+        return new ResponseEntity<>(tags, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}")
