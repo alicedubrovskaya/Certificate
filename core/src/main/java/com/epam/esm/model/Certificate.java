@@ -1,5 +1,6 @@
 package com.epam.esm.model;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -10,8 +11,8 @@ public class Certificate {
     private Long id;
     private String name;
     private String description;
-    private Price price;
-    private Duration duration;
+    private BigDecimal price;
+    private int duration;
     private LocalDateTime dateOfCreation;
     private LocalDateTime dateOfModification;
     private Set<Tag> tags = new HashSet<>();
@@ -19,7 +20,7 @@ public class Certificate {
     public Certificate() {
     }
 
-    public Certificate(Long id, String name, String description, Price price, Duration duration,
+    public Certificate(Long id, String name, String description, BigDecimal price, int duration,
                        LocalDateTime dateOfModification, LocalDateTime dateOfCreation, Set<Tag> tags) {
         this.id = id;
         this.name = name;
@@ -43,11 +44,11 @@ public class Certificate {
         return description;
     }
 
-    public Price getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public Duration getDuration() {
+    public int getDuration() {
         return duration;
     }
 
@@ -75,11 +76,11 @@ public class Certificate {
         this.description = description;
     }
 
-    public void setPrice(Price price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public void setDuration(Duration duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 
@@ -99,6 +100,7 @@ public class Certificate {
     public int hashCode() {
         return Objects.hash(id, name, description, price, duration, dateOfModification, dateOfCreation, tags);
     }
+
     @Override
     public String toString() {
         return "Certificate{" +

@@ -14,7 +14,7 @@ public class CertificateDto {
     private String name;
     private String description;
     private BigDecimal price;
-    private Duration duration;
+    private int duration;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -29,7 +29,7 @@ public class CertificateDto {
     public CertificateDto() {
     }
 
-    public CertificateDto(Long id, String name, String description, BigDecimal price, Duration duration,
+    public CertificateDto(Long id, String name, String description, BigDecimal price, int duration,
                           LocalDateTime dateOfModification, LocalDateTime dateOfCreation, Set<TagDto> tags) {
         this.id = id;
         this.name = name;
@@ -39,6 +39,10 @@ public class CertificateDto {
         this.dateOfCreation = dateOfCreation;
         this.dateOfModification = dateOfModification;
         this.tags = tags;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
@@ -53,7 +57,7 @@ public class CertificateDto {
         return price;
     }
 
-    public Duration getDuration() {
+    public int getDuration() {
         return duration;
     }
 
@@ -85,7 +89,7 @@ public class CertificateDto {
         this.price = price;
     }
 
-    public void setDuration(Duration duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 

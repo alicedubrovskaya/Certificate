@@ -21,7 +21,7 @@ public class CertificateController {
         this.certificateService = certificateServiceImpl;
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CertificateDto> getGiftCertificate(@PathVariable("id") Long id) {
         CertificateDto certificateDto = certificateService.findById(id);
         return new ResponseEntity<>(certificateDto, HttpStatus.OK);
