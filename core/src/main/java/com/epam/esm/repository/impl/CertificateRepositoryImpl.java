@@ -1,11 +1,8 @@
 package com.epam.esm.repository.impl;
 
 import com.epam.esm.model.Certificate;
-import com.epam.esm.model.Tag;
 import com.epam.esm.repository.CertificateRepository;
-import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.converter.mapper.CertificateMapper;
-import com.epam.esm.service.converter.mapper.TagMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -15,8 +12,6 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,8 +21,8 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     private final CertificateMapper certificateMapper;
 
     private static final String CREATE_CERTIFICATE =
-            "INSERT INTO `gift_certificate` (name, description, price, duration, create_date, last_update_date) " +
-                    "VALUES (?, ?, ?, ?, ?, ?);";
+            "INSERT INTO `gift_certificate` (name, description, cost, currency, duration, create_date, last_update_date) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?);";
 
     private static final String ATTACH_TAG = "INSERT INTO `tag_gift_certificate` (tag_id, gift_certificate_id)" +
             " VALUES (?,?)";
@@ -46,8 +41,9 @@ public class CertificateRepositoryImpl implements CertificateRepository {
             int index = 1;
             preparedStatement.setString(index++, certificate.getName());
             preparedStatement.setString(index++, certificate.getDescription());
-            preparedStatement.setBigDecimal(index++, certificate.getPrice());
-            preparedStatement.setInt(index++, certificate.getDuration());
+            preparedStatement.setBigDecimal(index++, certificate.getPrice().getCost());
+            preparedStatement.setInt(index++, certificate.getPrice().getCurrency().getId());
+            preparedStatement.setLong(index++, certificate.getDuration().toDays());
             preparedStatement.setTimestamp(index++, Timestamp.valueOf(certificate.getDateOfCreation()));
             preparedStatement.setTimestamp(index, Timestamp.valueOf(certificate.getDateOfModification()));
             return preparedStatement;
@@ -58,6 +54,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
     @Override
     public Optional<Certificate> findById(Long id) {
+        //TODO Duration.ofDays(int)
         return Optional.empty();
     }
 

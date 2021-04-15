@@ -1,9 +1,9 @@
 package com.epam.esm.service.dto;
 
+import com.epam.esm.model.Price;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -13,8 +13,11 @@ public class CertificateDto {
     private Long id;
     private String name;
     private String description;
-    private BigDecimal price;
-    private int duration;
+    private Price price;
+
+    @JsonSerialize(using = DurationSerializer.class)
+    @JsonDeserialize(using = DurationDeserializer.class)
+    private Duration duration;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -29,7 +32,7 @@ public class CertificateDto {
     public CertificateDto() {
     }
 
-    public CertificateDto(Long id, String name, String description, BigDecimal price, int duration,
+    public CertificateDto(Long id, String name, String description, Price price, Duration duration,
                           LocalDateTime dateOfModification, LocalDateTime dateOfCreation, Set<TagDto> tags) {
         this.id = id;
         this.name = name;
@@ -53,11 +56,11 @@ public class CertificateDto {
         return description;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 
-    public int getDuration() {
+    public Duration getDuration() {
         return duration;
     }
 
@@ -85,11 +88,11 @@ public class CertificateDto {
         this.description = description;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Price price) {
         this.price = price;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(Duration duration) {
         this.duration = duration;
     }
 

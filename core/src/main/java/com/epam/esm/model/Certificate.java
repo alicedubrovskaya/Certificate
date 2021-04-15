@@ -11,8 +11,8 @@ public class Certificate {
     private Long id;
     private String name;
     private String description;
-    private BigDecimal price;
-    private int duration;
+    private Price price;
+    private Duration duration;
     private LocalDateTime dateOfCreation;
     private LocalDateTime dateOfModification;
     private Set<Tag> tags = new HashSet<>();
@@ -20,7 +20,7 @@ public class Certificate {
     public Certificate() {
     }
 
-    public Certificate(Long id, String name, String description, BigDecimal price, int duration,
+    public Certificate(Long id, String name, String description, Price price, Duration duration,
                        LocalDateTime dateOfModification, LocalDateTime dateOfCreation, Set<Tag> tags) {
         this.id = id;
         this.name = name;
@@ -44,11 +44,11 @@ public class Certificate {
         return description;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 
-    public int getDuration() {
+    public Duration getDuration() {
         return duration;
     }
 
@@ -76,11 +76,11 @@ public class Certificate {
         this.description = description;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Price price) {
         this.price = price;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(Duration duration) {
         this.duration = duration;
     }
 
