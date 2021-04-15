@@ -1,7 +1,10 @@
 package com.epam.esm.model;
 
+import lombok.AllArgsConstructor;
+
 import java.math.BigDecimal;
 
+@AllArgsConstructor
 public class Price {
     private BigDecimal cost;
     private Currency currency;
@@ -12,13 +15,5 @@ public class Price {
 
     public Currency getCurrency() {
         return currency;
-    }
-
-    public void setCost(BigDecimal cost) {
-        this.cost = cost;
-    }
-
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
     }
 }

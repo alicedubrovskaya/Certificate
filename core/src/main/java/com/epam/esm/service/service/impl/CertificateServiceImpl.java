@@ -1,5 +1,7 @@
 package com.epam.esm.service.service.impl;
 
+import com.epam.esm.exception.ErrorMessage;
+import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Tag;
 import com.epam.esm.repository.CertificateRepository;
@@ -15,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class CertificateServiceImpl implements CertificateService {
@@ -54,12 +55,19 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public void delete(Long id) {
-
+        certificateRepository.findById(id).ifPresentOrElse(certificate -> {
+            certificateRepository.detachTagFromCertificate(id);
+            certificateRepository.delete(id);
+        }, () -> {
+            throw new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND, id));
+        });
     }
 
     @Override
     public CertificateDto findById(Long id) {
-        return null;
+        return certificateConverter.convert(certificateRepository.findById(id).orElseThrow(() -> {
+            throw new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND, id));
+        }));
     }
 
     @Override

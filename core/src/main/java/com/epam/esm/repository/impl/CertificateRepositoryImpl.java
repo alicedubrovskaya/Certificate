@@ -24,8 +24,15 @@ public class CertificateRepositoryImpl implements CertificateRepository {
             "INSERT INTO `gift_certificate` (name, description, cost, currency, duration, create_date, last_update_date) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?);";
 
+    private static final String READ_CERTIFICATE = "SELECT id, name, description, cost, currency, duration, create_date, last_update_date" +
+            " FROM gift_certificate WHERE id=?";
+
     private static final String ATTACH_TAG = "INSERT INTO `tag_gift_certificate` (tag_id, gift_certificate_id)" +
             " VALUES (?,?)";
+
+    private static final String DETACH_TAG = "DELETE FROM `tag_gift_certificate` WHERE gift_certificate_id=?";
+
+    private static final String DELETE_CERTIFICATE = "DELETE FROM `gift_certificate` WHERE `id`=? ";
 
     @Autowired
     protected CertificateRepositoryImpl(JdbcTemplate jdbcTemplate, CertificateMapper certificateMapper) {
@@ -54,8 +61,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
     @Override
     public Optional<Certificate> findById(Long id) {
-        //TODO Duration.ofDays(int)
-        return Optional.empty();
+        return jdbcTemplate.query(READ_CERTIFICATE, certificateMapper, id).stream().findAny();
     }
 
     @Override
@@ -65,11 +71,16 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
     @Override
     public void delete(Long id) {
-
+        jdbcTemplate.update(DELETE_CERTIFICATE, id);
     }
 
     @Override
     public void attachTagToCertificate(Long certificateId, Long tagId) {
         jdbcTemplate.update(ATTACH_TAG, tagId, certificateId);
+    }
+
+    @Override
+    public void detachTagFromCertificate(Long certificateId) {
+        jdbcTemplate.update(DETACH_TAG, certificateId);
     }
 }

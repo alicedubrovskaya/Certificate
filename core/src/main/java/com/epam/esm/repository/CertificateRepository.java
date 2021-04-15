@@ -15,4 +15,6 @@ public interface CertificateRepository {
     void delete(Long id);
 
     void attachTagToCertificate(Long certificateId, Long tagId);
+
+    void detachTagFromCertificate(Long certificateId);
 }
