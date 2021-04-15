@@ -1,6 +1,7 @@
 package com.epam.esm.repository.impl;
 
 import com.epam.esm.model.Certificate;
+import com.epam.esm.model.Currency;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.service.converter.mapper.CertificateMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
     private static final String READ_CERTIFICATE = "SELECT id, name, description, cost, currency, duration, create_date, last_update_date" +
             " FROM gift_certificate WHERE id=?";
+
+    private static final String UPDATE_CERTIFICATE = "UPDATE `gift_certificate` SET name=?,description=?, cost=?," +
+            " currency=?, duration=?, last_update_date=? WHERE id=?";
 
     private static final String ATTACH_TAG = "INSERT INTO `tag_gift_certificate` (tag_id, gift_certificate_id)" +
             " VALUES (?,?)";
@@ -75,12 +79,20 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     }
 
     @Override
+    public void update(Certificate certificate) {
+        jdbcTemplate.update(UPDATE_CERTIFICATE, certificate.getName(), certificate.getDescription(),
+                certificate.getPrice().getCost(), certificate.getPrice().getCurrency().getId(),
+                certificate.getDuration().toDays(), Timestamp.valueOf(certificate.getDateOfModification()),
+                certificate.getId());
+    }
+
+    @Override
     public void attachTagToCertificate(Long certificateId, Long tagId) {
         jdbcTemplate.update(ATTACH_TAG, tagId, certificateId);
     }
 
     @Override
-    public void detachTagFromCertificate(Long certificateId) {
+    public void detachTagsFromCertificate(Long certificateId) {
         jdbcTemplate.update(DETACH_TAG, certificateId);
     }
 }

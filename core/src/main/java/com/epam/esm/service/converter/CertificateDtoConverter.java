@@ -1,8 +1,10 @@
 package com.epam.esm.service.converter;
 
 import com.epam.esm.model.Certificate;
+import com.epam.esm.model.Price;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.dto.CertificateDto;
+import com.epam.esm.service.dto.PriceDto;
 import com.epam.esm.service.dto.TagDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,7 +31,7 @@ public class CertificateDtoConverter implements DtoConverter<Certificate, Certif
             certificateDto.setDuration(certificate.getDuration());
             certificateDto.setName(certificate.getName());
             certificateDto.setDescription(certificate.getDescription());
-            certificateDto.setPrice(certificate.getPrice());
+            certificateDto.setPrice(new PriceDto(certificate.getPrice().getCost(), certificate.getPrice().getCurrency()));
             Set<TagDto> tagDTO = certificate.getTags()
                     .stream()
                     .map(converter::convert)
@@ -49,7 +51,7 @@ public class CertificateDtoConverter implements DtoConverter<Certificate, Certif
             certificate.setDuration(certificateDto.getDuration());
             certificate.setName(certificateDto.getName());
             certificate.setDescription(certificateDto.getDescription());
-            certificate.setPrice(certificateDto.getPrice());
+            certificate.setPrice(new Price(certificateDto.getPrice().getCost(), certificateDto.getPrice().getCurrency()));
             if (certificateDto.getTags() != null) {
                 certificate.setTags(certificateDto.getTags()
                         .stream()
