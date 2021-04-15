@@ -29,6 +29,9 @@ public class CertificateRepositoryImpl implements CertificateRepository {
             "INSERT INTO `gift_certificate` (name, description, price, duration, create_date, last_update_date) " +
                     "VALUES (?, ?, ?, ?, ?, ?);";
 
+    private static final String ATTACH_TAG = "INSERT INTO `tag_gift_certificate` (tag_id, gift_certificate_id)" +
+            " VALUES (?,?)";
+
     @Autowired
     protected CertificateRepositoryImpl(JdbcTemplate jdbcTemplate, CertificateMapper certificateMapper) {
         this.jdbcTemplate = jdbcTemplate;
@@ -66,5 +69,10 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     @Override
     public void delete(Long id) {
 
+    }
+
+    @Override
+    public void attachTagToCertificate(Long certificateId, Long tagId) {
+        jdbcTemplate.update(ATTACH_TAG, tagId, certificateId);
     }
 }

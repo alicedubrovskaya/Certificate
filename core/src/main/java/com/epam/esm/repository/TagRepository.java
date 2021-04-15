@@ -10,6 +10,8 @@ public interface TagRepository {
 
     Optional<Tag> findById(Long id);
 
+    Optional<Tag> findByName(String name);
+
     List<Tag> findAll();
 
     void delete(Long id);
