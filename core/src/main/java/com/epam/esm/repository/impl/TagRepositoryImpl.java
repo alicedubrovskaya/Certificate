@@ -25,6 +25,9 @@ public class TagRepositoryImpl implements TagRepository {
 
     private static final String READ_TAG_BY_NAME = "SELECT `id`, `name` FROM `tag` WHERE `name` = ?";
 
+    private static final String READ_TAG_BY_CERTIFICATE_ID = "SELECT `id`, `name` FROM `tag` JOIN tag_gift_certificate tgc " +
+            "ON tag.id = tgc.tag_id WHERE `gift_certificate_id` = ?";
+
     private static final String READ_TAGS = "SELECT `id`, `name` FROM `tag`";
 
     private static final String DELETE_TAG = "DELETE FROM `tag` WHERE `id` = ?";
@@ -54,7 +57,12 @@ public class TagRepositoryImpl implements TagRepository {
 
     @Override
     public Optional<Tag> findByName(String name) {
-        return jdbcTemplate.query(READ_TAG_BY_NAME,tagMapper, name).stream().findAny();
+        return jdbcTemplate.query(READ_TAG_BY_NAME, tagMapper, name).stream().findAny();
+    }
+
+    @Override
+    public List<Tag> findByCertificateId(Long certificateId) {
+        return jdbcTemplate.query(READ_TAG_BY_CERTIFICATE_ID, tagMapper, certificateId);
     }
 
     @Override

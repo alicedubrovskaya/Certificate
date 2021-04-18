@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -89,6 +90,8 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public List<CertificateDto> read(String tagName, String searchByName, String searchByDescription, String sortBy, String sortOrder) {
         List<Certificate> certificates = certificateRepository.findAll(tagName, searchByName, searchByDescription, sortBy, sortOrder);
+        certificates.forEach(certificate -> certificate.setTags(
+                new HashSet<>(tagRepository.findByCertificateId(certificate.getId()))));
         return certificates.stream()
                 .map(certificateConverter::convert)
                 .collect(Collectors.toList());
