@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CertificateServiceImpl implements CertificateService {
@@ -87,7 +88,10 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public List<CertificateDto> read(String tagName, String searchByName, String searchByDescription, String sortBy, String sortOrder) {
-        return null;
+        List<Certificate> certificates = certificateRepository.findAll(tagName, searchByName, searchByDescription, sortBy, sortOrder);
+        return certificates.stream()
+                .map(certificateConverter::convert)
+                .collect(Collectors.toList());
     }
 
     private Set<Tag> attachTagsToCertificate(Long certificateId, Set<Tag> tags) {

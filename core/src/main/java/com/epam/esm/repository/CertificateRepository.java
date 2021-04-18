@@ -10,7 +10,7 @@ public interface CertificateRepository {
 
     Optional<Certificate> findById(Long id);
 
-    List<Certificate> findAll();
+    List<Certificate> findAll(String tagName, String searchByName, String searchByDescription, String sortBy, String sortOrder);
 
     void delete(Long id);
 
