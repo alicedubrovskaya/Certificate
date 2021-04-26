@@ -51,6 +51,10 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
     private static final String ORDER_BY = "ORDER BY ";
 
+    //TODO
+    private static final String AND = "";
+
+
 
     @Autowired
     protected CertificateRepositoryImpl(JdbcTemplate jdbcTemplate, CertificateMapper certificateMapper) {

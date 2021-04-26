@@ -33,7 +33,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagDto update(TagDto entity) {
-        return null;
+        throw new UnsupportedOperationException("Update operation is not permitted");
     }
 
     @Override

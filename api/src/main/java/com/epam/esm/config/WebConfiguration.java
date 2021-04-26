@@ -11,6 +11,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 @Import({ServiceConfiguration.class, RepositoryConfiguration.class})
 @ComponentScan("com.epam.esm.controller")
-public class WebConfiguration {
 
+public class WebConfiguration {
 }

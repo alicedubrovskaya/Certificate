@@ -24,7 +24,7 @@ CREATE TABLE `tag_gift_certificate`
 (
     `tag_id`              INTEGER NOT NULL,
     `gift_certificate_id` INTEGER NOT NULL,
-    FOREIGN KEY (`tag_id`) REFERENCES `tag` (`id`),
-    FOREIGN KEY (`gift_certificate_id`) REFERENCES `gift_certificate` (`id`),
+    FOREIGN KEY (`tag_id`) REFERENCES `tag` (`id`) ON DELETE CASCADE ,
+    FOREIGN KEY (`gift_certificate_id`) REFERENCES `gift_certificate` (`id`) ON DELETE CASCADE,
     PRIMARY KEY (`tag_id`, `gift_certificate_id`)
 );

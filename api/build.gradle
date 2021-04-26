@@ -20,4 +20,9 @@ dependencies {
     implementation group: 'org.springframework', name: 'spring-context', version: '5.3.4'
     implementation group: 'org.springframework', name: 'spring-core', version: '5.3.4'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
+    // https://mvnrepository.com/artifact/javax.validation/validation-api
+    implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+    // https://mvnrepository.com/artifact/org.hibernate/hibernate-validator
+    implementation group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.16.Final'
+
 }

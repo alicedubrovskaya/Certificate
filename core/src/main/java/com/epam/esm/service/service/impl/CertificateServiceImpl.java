@@ -11,6 +11,7 @@ import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.service.CertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -35,7 +36,8 @@ public class CertificateServiceImpl implements CertificateService {
         this.certificateConverter = certificateConverter;
     }
 
-    //TODO transactional
+
+    @Transactional
     @Override
     public CertificateDto create(CertificateDto entity) {
         entity.setDateOfCreation(LocalDateTime.now());
@@ -46,6 +48,7 @@ public class CertificateServiceImpl implements CertificateService {
         return certificateConverter.convert(createdCertificate);
     }
 
+    @Transactional
     @Override
     public CertificateDto update(CertificateDto entity) {
         Certificate existingCertificate = certificateRepository
@@ -97,6 +100,7 @@ public class CertificateServiceImpl implements CertificateService {
                 .collect(Collectors.toList());
     }
 
+    //TODO dto arg, private
     private Set<Tag> attachTagsToCertificate(Long certificateId, Set<Tag> tags) {
         tags.forEach(tag -> {
             Optional<Tag> tagOptional = tagRepository.findByName(tag.getName());
