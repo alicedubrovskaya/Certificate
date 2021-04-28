@@ -1,26 +1,17 @@
 package com.epam.esm.service.dto;
 
-import com.epam.esm.model.Currency;
-import com.epam.esm.model.Price;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.epam.esm.model.enumeration.Currency;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.Digits;
 import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
 public class PriceDto {
-    @Digits(integer = 7, fraction = 2)
     private BigDecimal cost;
+
     private Currency currency;
 
     public BigDecimal getCost() {

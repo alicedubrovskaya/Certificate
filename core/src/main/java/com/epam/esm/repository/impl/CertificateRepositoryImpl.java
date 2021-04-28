@@ -2,7 +2,7 @@ package com.epam.esm.repository.impl;
 
 import com.epam.esm.model.Certificate;
 import com.epam.esm.repository.CertificateRepository;
-import com.epam.esm.service.converter.mapper.CertificateMapper;
+import com.epam.esm.repository.mapper.CertificateMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -51,7 +51,6 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
     private static final String ORDER_BY = "ORDER BY ";
 
-    //TODO
     private static final String AND = "";
 
 
@@ -85,6 +84,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     public Optional<Certificate> findById(Long id) {
         return jdbcTemplate.query(READ_CERTIFICATE, certificateMapper, id).stream().findAny();
     }
+
 
     @Override
     public List<Certificate> findAll(String tagName, String searchByName, String searchByDescription, String sortBy, String sortOrder) {

@@ -1,39 +1,48 @@
 package com.epam.esm.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
+import lombok.NoArgsConstructor;
 
-import javax.validation.Valid;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CertificateDto {
     private Long id;
 
-    @Length(min = 2, max = 30)
+//    @NotBlank
+//    @Pattern(regexp = ".{6,244}")
     private String name;
 
-    @Length(min = 5, max = 500)
     private String description;
 
-    private @Valid PriceDto price;
+    private PriceDto price;
 
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     @JsonSerialize(using = DurationSerializer.class)
     @JsonDeserialize(using = DurationDeserializer.class)
     private Duration duration;
 
+    //TODO format ISO
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime dateOfCreation;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime dateOfModification;
 
-    private Set<@Valid TagDto> tags = new HashSet<>();
+    private Set<TagDto> tags = new HashSet<>();
 }

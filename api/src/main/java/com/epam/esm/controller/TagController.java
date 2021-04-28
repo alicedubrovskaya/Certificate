@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
-
 import java.util.List;
 
 /**
@@ -36,7 +35,7 @@ public class TagController {
      * @return ResponseEntity which contains created tag with generated id. Response code 201.
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TagDto> createTag(@RequestBody @Valid TagDto tagDto) {
+    public ResponseEntity<TagDto> createTag(@RequestBody TagDto tagDto) throws ValidationException {
         tagDto = tagService.create(tagDto);
         return new ResponseEntity<>(tagDto, HttpStatus.CREATED);
     }
@@ -60,7 +59,7 @@ public class TagController {
      */
     @GetMapping
     public ResponseEntity<List<TagDto>> getTags() {
-        List<TagDto> tags = tagService.read();
+        List<TagDto> tags = tagService.findAll();
         return new ResponseEntity<>(tags, HttpStatus.OK);
     }
 

@@ -10,21 +10,21 @@ repositories {
 }
 
 dependencies {
-    compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
     implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.4'
     implementation group: 'org.springframework', name: 'spring-beans', version: '5.3.4'
     implementation group: 'org.springframework', name: 'spring-context', version: '5.3.4'
     implementation group: 'org.springframework', name: 'spring-core', version: '5.3.4'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+
+    //JSON
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.8'
 
     implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
     // https://mvnrepository.com/artifact/org.hibernate/hibernate-validator
     implementation group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.16.Final'
 
-//    // https://mvnrepository.com/artifact/org.slf4j/slf4j-nop
-//    testImplementation group: 'org.slf4j', name: 'slf4j-nop', version: '1.7.25'
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-nop
+    testImplementation group: 'org.slf4j', name: 'slf4j-nop', version: '1.7.25'
 
     // https://mvnrepository.com/artifact/org.springframework/spring-jdbc
     implementation group: 'org.springframework', name: 'spring-jdbc', version: '5.3.4'
@@ -42,5 +42,18 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.springframework/spring-tx
     implementation group: 'org.springframework', name: 'spring-tx', version: '5.3.5'
+
+    //Remove
+// https://mvnrepository.com/artifact/javax.servlet/servlet-api
+    implementation group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+    implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.4'
+    implementation group: 'org.springframework', name: 'spring-beans', version: '5.3.4'
+    implementation group: 'org.springframework', name: 'spring-context', version: '5.3.4'
+    implementation group: 'org.springframework', name: 'spring-core', version: '5.3.4'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
+    // https://mvnrepository.com/artifact/javax.validation/validation-api
+    implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+    // https://mvnrepository.com/artifact/org.hibernate/hibernate-validator
+    implementation group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.16.Final'
 
 }

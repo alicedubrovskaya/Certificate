@@ -9,6 +9,7 @@ import com.epam.esm.service.dto.TagDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,42 +24,41 @@ public class CertificateDtoConverter implements DtoConverter<Certificate, Certif
 
     @Override
     public CertificateDto convert(Certificate certificate) {
-        CertificateDto certificateDto = new CertificateDto();
-        if (certificate != null) {
-            certificateDto.setId(certificate.getId());
-            certificateDto.setDateOfCreation(certificate.getDateOfCreation());
-            certificateDto.setDateOfModification(certificate.getDateOfModification());
-            certificateDto.setDuration(certificate.getDuration());
-            certificateDto.setName(certificate.getName());
-            certificateDto.setDescription(certificate.getDescription());
-            certificateDto.setPrice(new PriceDto(certificate.getPrice().getCost(), certificate.getPrice().getCurrency()));
-            Set<TagDto> tagDTO = certificate.getTags()
-                    .stream()
+        Set<TagDto> tagDtos = new HashSet<>();
+        if (certificate.getTags() != null) {
+            tagDtos = certificate.getTags().stream()
                     .map(converter::convert)
                     .collect(Collectors.toSet());
-            certificateDto.setTags(tagDTO);
         }
-        return certificateDto;
+        return CertificateDto.builder()
+                .id(certificate.getId())
+                .dateOfCreation(certificate.getDateOfCreation())
+                .dateOfModification(certificate.getDateOfModification())
+                .duration(certificate.getDuration())
+                .name(certificate.getName())
+                .description(certificate.getDescription())
+                .price(new PriceDto(certificate.getPrice().getCost(), certificate.getPrice().getCurrency()))
+                .tags(tagDtos)
+                .build();
     }
 
     @Override
     public Certificate unconvert(CertificateDto certificateDto) {
-        Certificate certificate = new Certificate();
-        if (certificateDto != null) {
-            certificate.setId(certificateDto.getId());
-            certificate.setDateOfModification(certificateDto.getDateOfModification());
-            certificate.setDateOfCreation(certificateDto.getDateOfCreation());
-            certificate.setDuration(certificateDto.getDuration());
-            certificate.setName(certificateDto.getName());
-            certificate.setDescription(certificateDto.getDescription());
-            certificate.setPrice(new Price(certificateDto.getPrice().getCost(), certificateDto.getPrice().getCurrency()));
-            if (certificateDto.getTags() != null) {
-                certificate.setTags(certificateDto.getTags()
-                        .stream()
-                        .map(converter::unconvert)
-                        .collect(Collectors.toSet()));
-            }
+        Set<Tag> tags = new HashSet<>();
+        if (certificateDto.getTags() != null) {
+            tags = certificateDto.getTags().stream()
+                    .map(converter::unconvert)
+                    .collect(Collectors.toSet());
         }
-        return certificate;
+        return Certificate.builder()
+                .id(certificateDto.getId())
+                .dateOfCreation(certificateDto.getDateOfCreation())
+                .dateOfModification(certificateDto.getDateOfModification())
+                .duration(certificateDto.getDuration())
+                .name(certificateDto.getName())
+                .description(certificateDto.getDescription())
+                .price(new Price(certificateDto.getPrice().getCost(), certificateDto.getPrice().getCurrency()))
+                .tags(tags)
+                .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.service.CertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,14 +53,14 @@ public class CertificateController {
      * @return found certificates. Response code 200.
      */
     @GetMapping
-    public ResponseEntity<List<CertificateDto>> getGiftCertificate(
+    public ResponseEntity<List<CertificateDto>> getGiftCertificates(
             @RequestParam(value = "tagName", required = false) String tagName,
             @RequestParam(value = "certificateName", required = false) String certificateName,
             @RequestParam(value = "certificateDescription", required = false) String certificateDescription,
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "sortOrder", required = false) String sortOrder) {
 
-        List<CertificateDto> certificates = certificateService.read(tagName, certificateName, certificateDescription,
+        List<CertificateDto> certificates = certificateService.findAllByParams(tagName, certificateName, certificateDescription,
                 sortBy, sortOrder);
         return new ResponseEntity<>(certificates, HttpStatus.OK);
     }
@@ -71,7 +72,8 @@ public class CertificateController {
      * @return ResponseEntity which contains created certificate with generated id. Response code 201.
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CertificateDto> createGiftCertificate(@RequestBody @Valid CertificateDto certificateDto) {
+    public ResponseEntity<CertificateDto> createGiftCertificate(@RequestBody @Valid CertificateDto certificateDto)
+            throws ValidationException {
         certificateDto = certificateService.create(certificateDto);
         return new ResponseEntity<>(certificateDto, HttpStatus.CREATED);
     }
@@ -79,7 +81,7 @@ public class CertificateController {
     /**
      * Updates certificate
      *
-     * @param id             id unique identifier of certificate, that should be positive integer number
+     * @param id             unique identifier of certificate, that should be positive integer number
      * @param certificateDto
      * @return ResponseEntity which contains updated certificate. Response code 201.
      */

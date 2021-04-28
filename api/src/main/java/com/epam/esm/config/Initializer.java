@@ -1,24 +1,28 @@
 package com.epam.esm.config;
 
-import org.springframework.web.WebApplicationInitializer;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
-public class Initializer implements WebApplicationInitializer {
-
-    private static final String DISPATCHER_SERVLET_NAME = "dispatcher";
+public class Initializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+    @Override
+    protected Class<?>[] getRootConfigClasses() {
+        return new Class[0];
+    }
 
     @Override
-    public void onStartup(ServletContext servletContext) {
-        AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-        context.register(WebConfiguration.class);
-        context.setServletContext(servletContext);
-        ServletRegistration.Dynamic servlet =
-                servletContext.addServlet(DISPATCHER_SERVLET_NAME, new DispatcherServlet(context));
-        servlet.addMapping("/");
-        servlet.setLoadOnStartup(1);
+    protected Class<?>[] getServletConfigClasses() {
+        return new Class[]{WebConfiguration.class};
+    }
+
+    @Override
+    protected String[] getServletMappings() {
+        return new String[]{"/"};
+    }
+
+    @Override
+    public void customizeRegistration(ServletRegistration.Dynamic registration) {
+        registration.setInitParameter("throwExceptionIfNoHandlerFound", "true");
+        super.customizeRegistration(registration);
     }
 }

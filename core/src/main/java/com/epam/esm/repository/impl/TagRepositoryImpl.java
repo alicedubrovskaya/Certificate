@@ -2,7 +2,7 @@ package com.epam.esm.repository.impl;
 
 import com.epam.esm.model.Tag;
 import com.epam.esm.repository.TagRepository;
-import com.epam.esm.service.converter.mapper.TagMapper;
+import com.epam.esm.repository.mapper.TagMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -19,9 +19,9 @@ public class TagRepositoryImpl implements TagRepository {
     private final JdbcTemplate jdbcTemplate;
     private final TagMapper tagMapper;
 
-    private static final String CREATE_TAG = "INSERT INTO `tag` (`name`) VALUES (?)";
+    private static final String CREATE_TAG = "INSERT INTO tag (name) VALUES (?)";
 
-    private static final String READ_TAG_BY_ID = "SELECT `id`, `name` FROM `tag` WHERE `id` = ?";
+    private static final String READ_TAG_BY_ID = "SELECT id, name FROM tag WHERE id = ?";
 
     private static final String READ_TAG_BY_NAME = "SELECT `id`, `name` FROM `tag` WHERE `name` = ?";
 
@@ -46,7 +46,12 @@ public class TagRepositoryImpl implements TagRepository {
             preparedStatement.setString(1, tag.getName());
             return preparedStatement;
         }, keyHolder);
-        tag.setId(keyHolder.getKey().longValue());
+        if (keyHolder.getKeys().size() > 1) {
+            Object integer = keyHolder.getKeys().get("id");
+            tag.setId(Long.valueOf(integer.toString()));
+        } else {
+            tag.setId(keyHolder.getKey().longValue());
+        }
         return tag;
     }
 

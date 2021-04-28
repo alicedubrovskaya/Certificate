@@ -1,5 +1,6 @@
 package com.epam.esm.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.Duration;
@@ -8,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@Builder
 public class Certificate {
     private Long id;
     private String name;

@@ -1,4 +1,4 @@
-package com.epam.esm.model;
+package com.epam.esm.model.enumeration;
 
 public enum Currency {
     USD("USD"), EUR("EUR"), BYN("BYN"), RUB("RUB");

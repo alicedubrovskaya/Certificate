@@ -1,5 +1,6 @@
 package com.epam.esm.model;
 
+import com.epam.esm.model.enumeration.Currency;
 import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
