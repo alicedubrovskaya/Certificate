@@ -8,8 +8,10 @@ import com.epam.esm.model.enumeration.ErrorMessage;
 import com.epam.esm.model.enumeration.RequestedResource;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
+import com.epam.esm.repository.specification.CertificateSpecification;
 import com.epam.esm.service.converter.DtoConverter;
 import com.epam.esm.service.dto.CertificateDto;
+import com.epam.esm.service.dto.SearchCertificateDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.service.CertificateService;
 import com.epam.esm.service.converter.mapper.Mapper;
@@ -94,6 +96,7 @@ public class CertificateServiceImpl implements CertificateService {
         });
     }
 
+    //TODO with tags
     @Override
     public CertificateDto findById(Long certificateId) {
         return certificateConverter.convert(certificateRepository.findById(certificateId).orElseThrow(() -> {
@@ -102,8 +105,8 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public List<CertificateDto> findAllByParams(String tagName, String searchByName, String searchByDescription, String sortBy, String sortOrder) {
-        List<Certificate> certificates = certificateRepository.findAll(tagName, searchByName, searchByDescription, sortBy, sortOrder);
+    public List<CertificateDto> findAllByParams(SearchCertificateDto searchCertificateDto) {
+        List<Certificate> certificates = certificateRepository.findAll(new CertificateSpecification(searchCertificateDto));
         certificates.forEach(certificate -> certificate.setTags(
                 new HashSet<>(tagRepository.findByCertificateId(certificate.getId()))));
         return certificates.stream()

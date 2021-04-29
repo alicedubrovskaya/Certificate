@@ -2,6 +2,7 @@ package com.epam.esm.controller;
 
 import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.dto.CertificateDto;
+import com.epam.esm.service.dto.SearchCertificateDto;
 import com.epam.esm.service.service.CertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,27 +42,15 @@ public class CertificateController {
         return new ResponseEntity<>(certificateDto, HttpStatus.OK);
     }
 
-
     /**
      * Gets filtered certificates
      *
-     * @param tagName                that should contain certificate
-     * @param certificateName
-     * @param certificateDescription
-     * @param sortBy
-     * @param sortOrder
+     * @param searchCertificateDto
      * @return found certificates. Response code 200.
      */
-    @GetMapping
-    public ResponseEntity<List<CertificateDto>> getGiftCertificates(
-            @RequestParam(value = "tagName", required = false) String tagName,
-            @RequestParam(value = "certificateName", required = false) String certificateName,
-            @RequestParam(value = "certificateDescription", required = false) String certificateDescription,
-            @RequestParam(value = "sortBy", required = false) String sortBy,
-            @RequestParam(value = "sortOrder", required = false) String sortOrder) {
-
-        List<CertificateDto> certificates = certificateService.findAllByParams(tagName, certificateName, certificateDescription,
-                sortBy, sortOrder);
+    @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<CertificateDto>> getGiftCertificates(@RequestBody SearchCertificateDto searchCertificateDto) {
+        List<CertificateDto> certificates = certificateService.findAllByParams(searchCertificateDto);
         return new ResponseEntity<>(certificates, HttpStatus.OK);
     }
 

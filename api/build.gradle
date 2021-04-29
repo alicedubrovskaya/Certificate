@@ -11,9 +11,9 @@ repositories {
     mavenCentral()
 }
 
-test {
-    useJUnitPlatform()
-}
+//test {
+//    useJUnitPlatform()
+//}
 
 dependencies {
     implementation project(':core')
@@ -45,5 +45,5 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.glassfish/javax.servlet
     implementation group: 'org.glassfish', name: 'javax.servlet', version: '3.0.1'
-
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.7.7'
 }

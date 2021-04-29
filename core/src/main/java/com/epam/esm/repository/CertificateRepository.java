@@ -1,6 +1,7 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.model.Certificate;
+import com.epam.esm.repository.specification.CertificateSpecification;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +11,7 @@ public interface CertificateRepository {
 
     Optional<Certificate> findById(Long id);
 
-    List<Certificate> findAll(String tagName, String searchByName, String searchByDescription, String sortBy, String sortOrder);
+    List<Certificate> findAll(CertificateSpecification specification);
 
     void delete(Long id);
 
