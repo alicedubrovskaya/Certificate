@@ -3,6 +3,7 @@ package com.epam.esm.controller.advice;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ValidationException;
 import com.epam.esm.model.enumeration.ErrorMessage;
+import com.epam.esm.model.enumeration.RequestedResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,19 +18,25 @@ public class ExceptionAdvice {
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<Object> handleServiceException(ValidationException e) {
-        int errorCode = Integer.parseInt("400" + e.getRequestedResource().getErrorCode());
         List<String> errors = e.getErrors().stream().map(ErrorMessage::getType)
                 .collect(Collectors.toList());
-        ApiException apiException = new ApiException(errorCode, errors);
+        ApiException apiException = new ApiException(getErrorCode("400", e.getRequestedResource()), errors);
         return new ResponseEntity<>(
                 apiException, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = ResourceNotFoundException.class)
     public ResponseEntity<Object> exception(ResourceNotFoundException e) {
-        int errorCode = Integer.parseInt("404" + e.getRequestedResource().getErrorCode());
-        ApiException apiException = new ApiException(errorCode, e.getErrorMessage().getType());
+        ApiException apiException = new ApiException(getErrorCode("404", e.getRequestedResource()), getErrorMessage(e));
         return new ResponseEntity<>(
                 apiException, new HttpHeaders(), HttpStatus.NOT_FOUND);
+    }
+
+    private int getErrorCode(String code, RequestedResource requestedResource) {
+        return Integer.parseInt(code + requestedResource.getErrorCode());
+    }
+
+    private String getErrorMessage(ResourceNotFoundException e) {
+        return e.getErrorMessage().getType() + String.format(" (id=%d)", e.getRequestedResourceId());
     }
 }

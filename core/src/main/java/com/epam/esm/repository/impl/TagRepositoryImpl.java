@@ -19,18 +19,18 @@ public class TagRepositoryImpl implements TagRepository {
     private final JdbcTemplate jdbcTemplate;
     private final TagMapper tagMapper;
 
-    private static final String CREATE_TAG = "INSERT INTO tag (name) VALUES (?)";
+    private static final String CREATE_QUERY = "INSERT INTO tag (name) VALUES (?)";
 
-    private static final String READ_TAG_BY_ID = "SELECT id, name FROM tag WHERE id = ?";
+    private static final String READ_BY_ID_QUERY = "SELECT id, name FROM tag WHERE id = ?";
 
-    private static final String READ_TAG_BY_NAME = "SELECT `id`, `name` FROM `tag` WHERE `name` = ?";
+    private static final String READ_BY_NAME_QUERY = "SELECT `id`, `name` FROM `tag` WHERE `name` = ?";
 
-    private static final String READ_TAG_BY_CERTIFICATE_ID = "SELECT `id`, `name` FROM `tag` JOIN tag_gift_certificate tgc " +
+    private static final String READ_BY_CERTIFICATE_ID_QUERY = "SELECT `id`, `name` FROM `tag` JOIN tag_gift_certificate tgc " +
             "ON tag.id = tgc.tag_id WHERE `gift_certificate_id` = ?";
 
-    private static final String READ_TAGS = "SELECT `id`, `name` FROM `tag`";
+    private static final String READ_QUERY = "SELECT `id`, `name` FROM `tag`";
 
-    private static final String DELETE_TAG = "DELETE FROM `tag` WHERE `id` = ?";
+    private static final String DELETE_QUERY = "DELETE FROM `tag` WHERE `id` = ?";
 
     @Autowired
     protected TagRepositoryImpl(JdbcTemplate jdbcTemplate, TagMapper tagMapper) {
@@ -42,7 +42,7 @@ public class TagRepositoryImpl implements TagRepository {
     public Tag create(Tag tag) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement(CREATE_TAG, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = connection.prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, tag.getName());
             return preparedStatement;
         }, keyHolder);
@@ -57,26 +57,26 @@ public class TagRepositoryImpl implements TagRepository {
 
     @Override
     public Optional<Tag> findById(Long id) {
-        return jdbcTemplate.query(READ_TAG_BY_ID, tagMapper, id).stream().findAny();
+        return jdbcTemplate.query(READ_BY_ID_QUERY, tagMapper, id).stream().findAny();
     }
 
     @Override
     public Optional<Tag> findByName(String name) {
-        return jdbcTemplate.query(READ_TAG_BY_NAME, tagMapper, name).stream().findAny();
+        return jdbcTemplate.query(READ_BY_NAME_QUERY, tagMapper, name).stream().findAny();
     }
 
     @Override
     public List<Tag> findByCertificateId(Long certificateId) {
-        return jdbcTemplate.query(READ_TAG_BY_CERTIFICATE_ID, tagMapper, certificateId);
+        return jdbcTemplate.query(READ_BY_CERTIFICATE_ID_QUERY, tagMapper, certificateId);
     }
 
     @Override
     public List<Tag> findAll() {
-        return jdbcTemplate.query(READ_TAGS, tagMapper);
+        return jdbcTemplate.query(READ_QUERY, tagMapper);
     }
 
     @Override
     public boolean delete(Long id) {
-        return jdbcTemplate.update(DELETE_TAG, id) != 0;
+        return jdbcTemplate.update(DELETE_QUERY, id) != 0;
     }
 }

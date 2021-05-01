@@ -49,7 +49,8 @@ public class CertificateController {
      * @return found certificates. Response code 200.
      */
     @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CertificateDto>> getGiftCertificates(@RequestBody SearchCertificateDto searchCertificateDto) {
+    public ResponseEntity<List<CertificateDto>> getGiftCertificates(
+            @RequestBody SearchCertificateDto searchCertificateDto) throws ValidationException {
         List<CertificateDto> certificates = certificateService.findAllByParams(searchCertificateDto);
         return new ResponseEntity<>(certificates, HttpStatus.OK);
     }

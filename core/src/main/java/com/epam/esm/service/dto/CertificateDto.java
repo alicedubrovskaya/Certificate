@@ -20,8 +20,6 @@ import java.util.Set;
 public class CertificateDto {
     private Long id;
 
-//    @NotBlank
-//    @Pattern(regexp = ".{6,244}")
     private String name;
 
     private String description;
@@ -33,13 +31,12 @@ public class CertificateDto {
     @JsonDeserialize(using = DurationDeserializer.class)
     private Duration duration;
 
-    //TODO format ISO
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm'Z'")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime dateOfCreation;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm'Z'")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime dateOfModification;

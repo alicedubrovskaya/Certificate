@@ -34,6 +34,8 @@ public class CertificateServiceImpl implements CertificateService {
     private final CertificateRepository certificateRepository;
     private final TagRepository tagRepository;
     private final Validator<CertificateDto> certificateDtoValidator;
+    private final Validator<SearchCertificateDto> searchCertificateDtoValidator;
+
     private final Mapper mapper;
 
     @Autowired
@@ -42,6 +44,7 @@ public class CertificateServiceImpl implements CertificateService {
                                   DtoConverter<Certificate, CertificateDto> certificateConverter,
                                   DtoConverter<Tag, TagDto> tagConverter,
                                   Validator<CertificateDto> certificateDtoValidator,
+                                  Validator<SearchCertificateDto> searchCertificateDtoValidator,
                                   Mapper mapper) {
 
         this.certificateRepository = certificateRepository;
@@ -49,6 +52,7 @@ public class CertificateServiceImpl implements CertificateService {
         this.certificateConverter = certificateConverter;
         this.tagConverter = tagConverter;
         this.certificateDtoValidator = certificateDtoValidator;
+        this.searchCertificateDtoValidator = searchCertificateDtoValidator;
         this.mapper = mapper;
     }
 
@@ -75,7 +79,8 @@ public class CertificateServiceImpl implements CertificateService {
         //TODO validation for certDto with @Valid (or with validator, but without checking name for null)
         Certificate existingCertificate = certificateRepository
                 .findById(certificateDto.getId())
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessage.RESOURCE_NOT_FOUND, RequestedResource.CERTIFICATE));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessage.RESOURCE_NOT_FOUND,
+                        RequestedResource.CERTIFICATE, certificateDto.getId()));
 
         Certificate certificateForUpdate = mapper.map(certificateDto, existingCertificate);
         certificateRepository.update(certificateForUpdate);
@@ -92,20 +97,28 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public void delete(Long certificateId) {
         certificateRepository.findById(certificateId).ifPresentOrElse(certificate -> certificateRepository.delete(certificateId), () -> {
-            throw new ResourceNotFoundException(ErrorMessage.RESOURCE_NOT_FOUND, RequestedResource.CERTIFICATE);
+            throw new ResourceNotFoundException(ErrorMessage.RESOURCE_NOT_FOUND, RequestedResource.CERTIFICATE,
+                    certificateId);
         });
     }
 
-    //TODO with tags
     @Override
     public CertificateDto findById(Long certificateId) {
-        return certificateConverter.convert(certificateRepository.findById(certificateId).orElseThrow(() -> {
-            throw new ResourceNotFoundException(ErrorMessage.RESOURCE_NOT_FOUND, RequestedResource.CERTIFICATE);
-        }));
+        Certificate certificate = certificateRepository.findById(certificateId).orElseThrow(() -> {
+            throw new ResourceNotFoundException(ErrorMessage.RESOURCE_NOT_FOUND, RequestedResource.CERTIFICATE,
+                    certificateId);
+        });
+        certificate.setTags(new HashSet<>(tagRepository.findByCertificateId(certificateId)));
+        return certificateConverter.convert(certificate);
     }
 
     @Override
-    public List<CertificateDto> findAllByParams(SearchCertificateDto searchCertificateDto) {
+    public List<CertificateDto> findAllByParams(SearchCertificateDto searchCertificateDto) throws ValidationException {
+        searchCertificateDtoValidator.validate(searchCertificateDto);
+        if (!searchCertificateDtoValidator.getMessages().isEmpty()) {
+            throw new ValidationException(searchCertificateDtoValidator.getMessages(), RequestedResource.CERTIFICATE);
+        }
+
         List<Certificate> certificates = certificateRepository.findAll(new CertificateSpecification(searchCertificateDto));
         certificates.forEach(certificate -> certificate.setTags(
                 new HashSet<>(tagRepository.findByCertificateId(certificate.getId()))));

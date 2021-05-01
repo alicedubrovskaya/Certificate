@@ -50,14 +50,15 @@ public class TagServiceImpl implements TagService {
     @Override
     public void delete(Long tagId) {
         tagRepository.findById(tagId).ifPresentOrElse(t -> tagRepository.delete(tagId), () -> {
-            throw new ResourceNotFoundException(ErrorMessage.RESOURCE_NOT_FOUND, RequestedResource.TAG);
+            throw new ResourceNotFoundException(ErrorMessage.RESOURCE_NOT_FOUND, RequestedResource.TAG,
+                    tagId);
         });
     }
 
     @Override
     public TagDto findById(Long tagId) {
         return dtoConverter.convert(tagRepository.findById(tagId).orElseThrow(() ->
-                new ResourceNotFoundException(ErrorMessage.RESOURCE_NOT_FOUND,RequestedResource.TAG)));
+                new ResourceNotFoundException(ErrorMessage.RESOURCE_NOT_FOUND, RequestedResource.TAG, tagId)));
     }
 
     @Override

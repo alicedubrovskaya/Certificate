@@ -29,11 +29,13 @@ public class CertificateValidator implements Validator<CertificateDto> {
     @Override
     public void validate(CertificateDto certificateDto) {
         validateDto(certificateDto);
-        validateName(certificateDto);
-        validateDescription(certificateDto);
-        validateCost(certificateDto);
-        validateDuration(certificateDto);
-        validateTags(certificateDto);
+        if (!errors.isEmpty()) {
+            validateName(certificateDto);
+            validateDescription(certificateDto);
+            validateCost(certificateDto);
+            validateDuration(certificateDto);
+            validateTags(certificateDto);
+        }
     }
 
     protected void validateDto(CertificateDto certificateDto) {

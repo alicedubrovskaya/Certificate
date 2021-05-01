@@ -17,14 +17,21 @@ public class TagValidator implements Validator<TagDto> {
 
     @Override
     public void validate(TagDto tagDto) {
-        validateDto(tagDto);
-        validateName(tagDto);
+        if (validateDto(tagDto)) {
+            validateName(tagDto);
+        }
     }
 
-    protected void validateDto(TagDto tagDto) {
+    public void validateId() {
+
+    }
+
+    protected boolean validateDto(TagDto tagDto) {
         if (tagDto == null) {
             errors.add(ErrorMessage.TAG_DTO_EMPTY);
+            return false;
         }
+        return true;
     }
 
     protected void validateName(TagDto tagDto) {

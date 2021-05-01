@@ -1,5 +1,6 @@
 package com.epam.esm.service.dto;
 
+import com.epam.esm.model.enumeration.SortOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,10 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SearchCertificateDto {
-    //TODO validator
     private String tagName;
     private String certificateName;
     private String description;
     private List<String> fieldsToSortBy;
-    private String sortOrder;
+    private SortOrder sortOrder;
 }
