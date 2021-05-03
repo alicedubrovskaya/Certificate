@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -41,5 +43,5 @@ public class CertificateDto {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime dateOfModification;
 
-    private Set<TagDto> tags = new HashSet<>();
+    private List<TagDto> tags = new ArrayList<>();
 }

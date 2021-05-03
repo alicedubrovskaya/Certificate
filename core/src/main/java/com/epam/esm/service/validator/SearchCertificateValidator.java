@@ -1,9 +1,7 @@
 package com.epam.esm.service.validator;
 
 import com.epam.esm.model.enumeration.ErrorMessage;
-import com.epam.esm.model.enumeration.SortOrder;
 import com.epam.esm.service.dto.SearchCertificateDto;
-import org.apache.commons.lang3.EnumUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
@@ -22,18 +20,16 @@ public class SearchCertificateValidator implements Validator<SearchCertificateDt
 
     @Override
     public void validate(SearchCertificateDto searchCertificateDto) {
-        if (validateDto(searchCertificateDto)) {
+        validateDto(searchCertificateDto);
+        if (errors.isEmpty()) {
             validateFieldsToSortBy(searchCertificateDto);
-//            validateSortOrder(searchCertificateDto);
         }
     }
 
-    protected boolean validateDto(SearchCertificateDto searchCertificateDto) {
+    protected void validateDto(SearchCertificateDto searchCertificateDto) {
         if (searchCertificateDto == null) {
             errors.add(ErrorMessage.SEARCH_CERTIFICATE_DTO_EMPTY);
-            return false;
         }
-        return true;
     }
 
     protected void validateFieldsToSortBy(SearchCertificateDto searchCertificateDto) {
@@ -42,13 +38,6 @@ public class SearchCertificateValidator implements Validator<SearchCertificateDt
             errors.add(ErrorMessage.SEARCH_CERTIFICATE_FIELD_TO_SORT_BY_INCORRECT);
         }
     }
-
-//    protected void validateSortOrder(SearchCertificateDto searchCertificateDto) {
-//        String sortOrder = searchCertificateDto.getSortOrder();
-//        if (sortOrder != null && !EnumUtils.isValidEnum(SortOrder.class, sortOrder)) {
-//            errors.add(ErrorMessage.CERTIFICATE_SORT_ORDER_INCORRECT);
-//        }
-//    }
 
     @Override
     public List<ErrorMessage> getMessages() {

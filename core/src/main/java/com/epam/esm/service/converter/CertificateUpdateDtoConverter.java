@@ -6,29 +6,24 @@ import com.epam.esm.model.Tag;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.PriceDto;
 import com.epam.esm.service.dto.TagDto;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-public class CertificateDtoConverter implements DtoConverter<Certificate, CertificateDto> {
-    private final DtoConverter<Tag, TagDto> converter;
+public class CertificateUpdateDtoConverter {
+    private final TagDtoConverter tagDtoConverter;
 
-    @Autowired
-    public CertificateDtoConverter(DtoConverter<Tag, TagDto> converter) {
-        this.converter = converter;
+    public CertificateUpdateDtoConverter() {
+        this.tagDtoConverter = new TagDtoConverter();
     }
 
-    @Override
-    public CertificateDto convert(Certificate certificate) {
-        Set<TagDto> tagDtos = new HashSet<>();
+    public CertificateDto convertToDto(Certificate certificate) {
+        List<TagDto> tagDtos = new ArrayList<>();
         if (certificate.getTags() != null) {
             tagDtos = certificate.getTags().stream()
-                    .map(converter::convert)
-                    .collect(Collectors.toSet());
+                    .map(tagDtoConverter::convertToDto)
+                    .collect(Collectors.toList());
         }
         return CertificateDto.builder()
                 .id(certificate.getId())
@@ -42,13 +37,12 @@ public class CertificateDtoConverter implements DtoConverter<Certificate, Certif
                 .build();
     }
 
-    @Override
-    public Certificate unconvert(CertificateDto certificateDto) {
-        Set<Tag> tags = new HashSet<>();
+    public Certificate convertToEntity(CertificateDto certificateDto) {
+        List<Tag> tags = new ArrayList<>();
         if (certificateDto.getTags() != null) {
             tags = certificateDto.getTags().stream()
-                    .map(converter::unconvert)
-                    .collect(Collectors.toSet());
+                    .map(tagDtoConverter::convertToEntity)
+                    .collect(Collectors.toList());
         }
         return Certificate.builder()
                 .id(certificateDto.getId())

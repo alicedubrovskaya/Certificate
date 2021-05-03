@@ -3,57 +3,47 @@ package com.epam.esm.service.service.impl;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ValidationException;
 import com.epam.esm.model.Certificate;
-import com.epam.esm.model.Tag;
 import com.epam.esm.model.enumeration.ErrorMessage;
 import com.epam.esm.model.enumeration.RequestedResource;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.repository.specification.CertificateSpecification;
-import com.epam.esm.service.converter.DtoConverter;
+import com.epam.esm.service.converter.CertificatePatchDtoConverter;
+import com.epam.esm.service.converter.CertificateUpdateDtoConverter;
+import com.epam.esm.service.converter.TagDtoConverter;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.SearchCertificateDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.service.CertificateService;
-import com.epam.esm.service.converter.mapper.Mapper;
 import com.epam.esm.service.validator.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class CertificateServiceImpl implements CertificateService {
-    private final DtoConverter<Certificate, CertificateDto> certificateConverter;
-    private final DtoConverter<Tag, TagDto> tagConverter;
+    private final CertificateUpdateDtoConverter certificateConverter;
+    private final TagDtoConverter tagConverter;
     private final CertificateRepository certificateRepository;
     private final TagRepository tagRepository;
     private final Validator<CertificateDto> certificateDtoValidator;
     private final Validator<SearchCertificateDto> searchCertificateDtoValidator;
 
-    private final Mapper mapper;
-
     @Autowired
     public CertificateServiceImpl(CertificateRepository certificateRepository,
                                   TagRepository tagRepository,
-                                  DtoConverter<Certificate, CertificateDto> certificateConverter,
-                                  DtoConverter<Tag, TagDto> tagConverter,
                                   Validator<CertificateDto> certificateDtoValidator,
-                                  Validator<SearchCertificateDto> searchCertificateDtoValidator,
-                                  Mapper mapper) {
-
+                                  Validator<SearchCertificateDto> searchCertificateDtoValidator
+    ) {
         this.certificateRepository = certificateRepository;
         this.tagRepository = tagRepository;
-        this.certificateConverter = certificateConverter;
-        this.tagConverter = tagConverter;
+        this.certificateConverter = new CertificateUpdateDtoConverter();
+        this.tagConverter = new TagDtoConverter();
         this.certificateDtoValidator = certificateDtoValidator;
         this.searchCertificateDtoValidator = searchCertificateDtoValidator;
-        this.mapper = mapper;
     }
 
     @Transactional
@@ -64,34 +54,61 @@ public class CertificateServiceImpl implements CertificateService {
             throw new ValidationException(certificateDtoValidator.getMessages(), RequestedResource.CERTIFICATE);
         }
 
-        certificateDto.setDateOfCreation(LocalDateTime.now());
-        certificateDto.setDateOfModification(LocalDateTime.now());
-        Certificate createdCertificate = certificateRepository.create(certificateConverter.unconvert(certificateDto));
+        Certificate createdCertificate = certificateRepository.create(certificateConverter.convertToEntity(certificateDto));
 
-        CertificateDto createdCertificateDto = certificateConverter.convert(createdCertificate);
+        CertificateDto createdCertificateDto = certificateConverter.convertToDto(createdCertificate);
         createdCertificateDto.setTags(attachTagsToCertificate(createdCertificate.getId(), certificateDto.getTags()));
-        return certificateConverter.convert(createdCertificate);
+        return certificateConverter.convertToDto(createdCertificate);
+    }
+
+
+    @Transactional
+    @Override
+    public CertificateDto update(CertificateDto certificateDto) throws ValidationException {
+        certificateDtoValidator.validate(certificateDto);
+        if (!certificateDtoValidator.getMessages().isEmpty()) {
+            throw new ValidationException(certificateDtoValidator.getMessages(), RequestedResource.CERTIFICATE);
+        }
+
+        if (certificateRepository.findById(certificateDto.getId()).isEmpty()) {
+            throw new ResourceNotFoundException(ErrorMessage.RESOURCE_NOT_FOUND,
+                    RequestedResource.CERTIFICATE, certificateDto.getId());
+        }
+
+        Certificate certificateForUpdate = certificateConverter.convertToEntity(certificateDto);
+        certificateRepository.update(certificateForUpdate);
+        certificateRepository.detachTagsFromCertificate(certificateDto.getId());
+        List<TagDto> attachedTags = attachTagsToCertificate(certificateDto.getId(), certificateDto.getTags());
+        certificateForUpdate.setTags(
+                attachedTags.stream().map(tagConverter::convertToEntity).collect(Collectors.toList()));
+        return certificateConverter.convertToDto(certificateForUpdate);
     }
 
     @Transactional
     @Override
-    public CertificateDto update(CertificateDto certificateDto) {
-        //TODO validation for certDto with @Valid (or with validator, but without checking name for null)
+    public CertificateDto patch(CertificateDto certificateDto) throws ValidationException {
+        //TODO validation without name
+//        certificateDtoValidator.validate(certificateDto);
+//        if (!certificateDtoValidator.getMessages().isEmpty()) {
+//            throw new ValidationException(certificateDtoValidator.getMessages(), RequestedResource.CERTIFICATE);
+//        }
+
         Certificate existingCertificate = certificateRepository
                 .findById(certificateDto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessage.RESOURCE_NOT_FOUND,
                         RequestedResource.CERTIFICATE, certificateDto.getId()));
 
-        Certificate certificateForUpdate = mapper.map(certificateDto, existingCertificate);
+        CertificatePatchDtoConverter converter = new CertificatePatchDtoConverter();
+        Certificate certificateForUpdate = converter.convertToEntity(certificateDto, existingCertificate);
         certificateRepository.update(certificateForUpdate);
 
         if (!certificateDto.getTags().isEmpty()) {
             certificateRepository.detachTagsFromCertificate(certificateForUpdate.getId());
-            Set<TagDto> attachedTags = attachTagsToCertificate(certificateForUpdate.getId(), certificateDto.getTags());
+            List<TagDto> attachedTags = attachTagsToCertificate(certificateForUpdate.getId(), certificateDto.getTags());
             certificateForUpdate.setTags(
-                    attachedTags.stream().map(tagConverter::unconvert).collect(Collectors.toSet()));
+                    attachedTags.stream().map(tagConverter::convertToEntity).collect(Collectors.toList()));
         }
-        return certificateConverter.convert(certificateForUpdate);
+        return certificateConverter.convertToDto(certificateForUpdate);
     }
 
     @Override
@@ -108,8 +125,8 @@ public class CertificateServiceImpl implements CertificateService {
             throw new ResourceNotFoundException(ErrorMessage.RESOURCE_NOT_FOUND, RequestedResource.CERTIFICATE,
                     certificateId);
         });
-        certificate.setTags(new HashSet<>(tagRepository.findByCertificateId(certificateId)));
-        return certificateConverter.convert(certificate);
+        certificate.setTags(tagRepository.findByCertificateId(certificateId));
+        return certificateConverter.convertToDto(certificate);
     }
 
     @Override
@@ -121,23 +138,16 @@ public class CertificateServiceImpl implements CertificateService {
 
         List<Certificate> certificates = certificateRepository.findAll(new CertificateSpecification(searchCertificateDto));
         certificates.forEach(certificate -> certificate.setTags(
-                new HashSet<>(tagRepository.findByCertificateId(certificate.getId()))));
+                tagRepository.findByCertificateId(certificate.getId())));
         return certificates.stream()
-                .map(certificateConverter::convert)
+                .map(certificateConverter::convertToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Set<TagDto> attachTagsToCertificate(Long certificateId, Set<TagDto> tags) {
+    public List<TagDto> attachTagsToCertificate(Long certificateId, List<TagDto> tags) {
         tags.forEach(tag -> {
-            Optional<Tag> tagOptional = tagRepository.findByName(tag.getName());
-            if (tagOptional.isEmpty()) {
-                Tag createdTag = tagRepository.create(tagConverter.unconvert(tag));
-                tag.setId(createdTag.getId());
-            } else {
-                Tag existingTag = tagOptional.get();
-                tag.setId(existingTag.getId());
-            }
+            tag.setId(tagRepository.createOrGet(tagConverter.convertToEntity(tag)).getId());
             certificateRepository.attachTagToCertificate(certificateId, tag.getId());
         });
         return tags;

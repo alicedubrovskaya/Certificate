@@ -50,7 +50,7 @@ public class TagServiceImplTest {
     @Test
     public void shouldGetById() {
         Mockito.when(repository.findById(Mockito.anyLong())).thenReturn(Optional.of(FIRST_TAG));
-        Mockito.when(converter.convert(Mockito.any(Tag.class))).thenReturn(FIRST_TAG_DTO);
+        Mockito.when(converter.convertToDto(Mockito.any(Tag.class))).thenReturn(FIRST_TAG_DTO);
         TagDto tagDto = service.findById(1L);
         Assert.assertEquals(FIRST_TAG_DTO, tagDto);
     }
@@ -82,16 +82,11 @@ public class TagServiceImplTest {
         verify(repository).findAll();
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void shouldNotUpdate() {
-        service.update(FIRST_TAG_DTO);
-    }
-
     @Test
     public void shouldCreateTag() throws ValidationException {
-        Mockito.when(converter.unconvert(Mockito.any(TagDto.class))).thenReturn(FIRST_TAG);
-        Mockito.when(repository.create(Mockito.any(Tag.class))).thenReturn(FIRST_TAG);
-        Mockito.when(converter.convert(Mockito.any(Tag.class))).thenReturn(FIRST_TAG_DTO);
+        Mockito.when(converter.convertToEntity(Mockito.any(TagDto.class))).thenReturn(FIRST_TAG);
+//        Mockito.when(repository.create(Mockito.any(Tag.class))).thenReturn(FIRST_TAG);
+        Mockito.when(converter.convertToDto(Mockito.any(Tag.class))).thenReturn(FIRST_TAG_DTO);
 
         TagDto tagDto = service.create(FIRST_TAG_DTO);
         Assert.assertEquals(FIRST_TAG_DTO, tagDto);

@@ -5,7 +5,9 @@ import lombok.Data;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -18,5 +20,5 @@ public class Certificate {
     private Duration duration;
     private LocalDateTime dateOfCreation;
     private LocalDateTime dateOfModification;
-    private Set<Tag> tags = new HashSet<>();
+    private List<Tag> tags;
 }

@@ -8,8 +8,18 @@ import com.epam.esm.service.dto.TagDto;
 import java.util.List;
 import java.util.Set;
 
-public interface CertificateService extends CrudService<CertificateDto> {
+public interface CertificateService {
+    CertificateDto create(CertificateDto certificateDto) throws ValidationException;
+
+    CertificateDto update(CertificateDto certificateDto) throws ValidationException ;
+
+    CertificateDto patch(CertificateDto certificateDto) throws ValidationException;
+
+    void delete(Long certificateId);
+
+    CertificateDto findById(Long certificateId);
+
     List<CertificateDto> findAllByParams(SearchCertificateDto searchCertificateDto) throws ValidationException;
 
-    Set<TagDto> attachTagsToCertificate(Long certificateId, Set<TagDto> tags);
+    List<TagDto> attachTagsToCertificate(Long certificateId, List<TagDto> tags);
 }

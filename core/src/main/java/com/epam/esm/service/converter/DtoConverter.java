@@ -1,7 +1,7 @@
 package com.epam.esm.service.converter;
 
 public interface DtoConverter<Entity, DtoEntity> {
-    DtoEntity convert(Entity entity);
+    DtoEntity convertToDto(Entity entity);
 
-    Entity unconvert(DtoEntity dtoEntity);
+    Entity convertToEntity(DtoEntity dtoEntity);
 }

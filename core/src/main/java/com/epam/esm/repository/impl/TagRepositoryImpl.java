@@ -38,8 +38,7 @@ public class TagRepositoryImpl implements TagRepository {
         this.tagMapper = tagMapper;
     }
 
-    @Override
-    public Tag create(Tag tag) {
+    protected Tag create(Tag tag) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS);
@@ -53,6 +52,12 @@ public class TagRepositoryImpl implements TagRepository {
             tag.setId(keyHolder.getKey().longValue());
         }
         return tag;
+    }
+
+    @Override
+    public Tag createOrGet(Tag tag) {
+        Optional<Tag> tagOptional = findByName(tag.getName());
+        return tagOptional.orElseGet(() -> create(tag));
     }
 
     @Override

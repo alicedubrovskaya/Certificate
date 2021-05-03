@@ -1,24 +1,21 @@
-package com.epam.esm.service.converter.mapper;
+package com.epam.esm.service.converter;
 
 import com.epam.esm.model.Certificate;
-import com.epam.esm.service.converter.DtoConverter;
 import com.epam.esm.service.dto.CertificateDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-@Component
-public class Mapper {
-    private final DtoConverter<Certificate, CertificateDto> certificateConverter;
+public class CertificatePatchDtoConverter {
+    private final CertificateUpdateDtoConverter certificateConverter;
 
-    @Autowired
-    public Mapper(DtoConverter<Certificate, CertificateDto> certificateConverter) {
-        this.certificateConverter = certificateConverter;
+    public CertificatePatchDtoConverter() {
+        this.certificateConverter = new CertificateUpdateDtoConverter();
     }
 
-    public Certificate map(CertificateDto certificateDto, Certificate existingCertificate) {
-        Certificate certificateFromRequest = certificateConverter.unconvert(certificateDto);
+    public Certificate convertToEntity(CertificateDto certificateDto, Certificate existingCertificate) {
+        Certificate certificateFromRequest = certificateConverter.convertToEntity(certificateDto);
 
         if (certificateFromRequest.getName() != null) {
             existingCertificate.setName(certificateFromRequest.getName());

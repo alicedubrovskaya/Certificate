@@ -6,7 +6,7 @@ import com.epam.esm.model.Tag;
 import com.epam.esm.model.enumeration.ErrorMessage;
 import com.epam.esm.model.enumeration.RequestedResource;
 import com.epam.esm.repository.TagRepository;
-import com.epam.esm.service.converter.DtoConverter;
+import com.epam.esm.service.converter.TagDtoConverter;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.service.TagService;
 import com.epam.esm.service.validator.Validator;
@@ -18,15 +18,15 @@ import java.util.stream.Collectors;
 
 @Service
 public class TagServiceImpl implements TagService {
-    private final DtoConverter<Tag, TagDto> dtoConverter;
+    private final TagDtoConverter tagConverter;
     private final TagRepository tagRepository;
     private final Validator<TagDto> tagValidator;
 
     @Autowired
-    public TagServiceImpl(TagRepository tagRepository, DtoConverter<Tag, TagDto> dtoConverter,
+    public TagServiceImpl(TagRepository tagRepository,
                           Validator<TagDto> tagValidator) {
         this.tagRepository = tagRepository;
-        this.dtoConverter = dtoConverter;
+        this.tagConverter = new TagDtoConverter();
         this.tagValidator = tagValidator;
     }
 
@@ -36,15 +36,8 @@ public class TagServiceImpl implements TagService {
         if (!tagValidator.getMessages().isEmpty()) {
             throw new ValidationException(tagValidator.getMessages(), RequestedResource.TAG);
         }
-
-        Tag tag = dtoConverter.unconvert(tagDto);
-        Tag createdTag = tagRepository.create(tag);
-        return dtoConverter.convert(createdTag);
-    }
-
-    @Override
-    public TagDto update(TagDto tagDto) {
-        throw new UnsupportedOperationException("Update operation is not permitted");
+        Tag createdTag = tagRepository.createOrGet(tagConverter.convertToEntity(tagDto));
+        return tagConverter.convertToDto(createdTag);
     }
 
     @Override
@@ -57,14 +50,14 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagDto findById(Long tagId) {
-        return dtoConverter.convert(tagRepository.findById(tagId).orElseThrow(() ->
+        return tagConverter.convertToDto(tagRepository.findById(tagId).orElseThrow(() ->
                 new ResourceNotFoundException(ErrorMessage.RESOURCE_NOT_FOUND, RequestedResource.TAG, tagId)));
     }
 
     @Override
     public List<TagDto> findAll() {
         return tagRepository.findAll().stream()
-                .map(dtoConverter::convert)
+                .map(tagConverter::convertToDto)
                 .collect(Collectors.toList());
     }
 }

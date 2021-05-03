@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -56,8 +57,8 @@ public class CertificateRepositoryImpl implements CertificateRepository {
             preparedStatement.setBigDecimal(index++, certificate.getPrice().getCost());
             preparedStatement.setInt(index++, certificate.getPrice().getCurrency().getId());
             preparedStatement.setLong(index++, certificate.getDuration().toDays());
-            preparedStatement.setTimestamp(index++, Timestamp.valueOf(certificate.getDateOfCreation()));
-            preparedStatement.setTimestamp(index, Timestamp.valueOf(certificate.getDateOfModification()));
+            preparedStatement.setTimestamp(index++, Timestamp.valueOf(LocalDateTime.now()));
+            preparedStatement.setTimestamp(index, Timestamp.valueOf(LocalDateTime.now()));
             return preparedStatement;
         }, keyHolder);
         certificate.setId(keyHolder.getKey().longValue());
@@ -83,7 +84,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     public void update(Certificate certificate) {
         jdbcTemplate.update(UPDATE_QUERY, certificate.getName(), certificate.getDescription(),
                 certificate.getPrice().getCost(), certificate.getPrice().getCurrency().getId(),
-                certificate.getDuration().toDays(), Timestamp.valueOf(certificate.getDateOfModification()),
+                certificate.getDuration().toDays(), Timestamp.valueOf(LocalDateTime.now()),
                 certificate.getId());
     }
 

@@ -69,16 +69,34 @@ public class CertificateController {
     }
 
     /**
-     * Updates certificate
+     * Wholly updates certificate
      *
      * @param id             unique identifier of certificate, that should be positive integer number
      * @param certificateDto
      * @return ResponseEntity which contains updated certificate. Response code 201.
      */
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CertificateDto> updateGiftCertificate(@PathVariable @Min(1) Long id, @RequestBody @Valid CertificateDto certificateDto) {
+    public ResponseEntity<CertificateDto> updateGiftCertificate(
+            @PathVariable @Min(1) Long id,
+            @RequestBody @Valid CertificateDto certificateDto) throws ValidationException {
         certificateDto.setId(id);
         certificateDto = certificateService.update(certificateDto);
+        return new ResponseEntity<>(certificateDto, HttpStatus.OK);
+    }
+
+    /**
+     * Partially updates certificate
+     *
+     * @param id             unique identifier of certificate, that should be positive integer number
+     * @param certificateDto
+     * @return ResponseEntity which contains updated certificate. Response code 201.
+     */
+    @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CertificateDto> patchGiftCertificate(
+            @PathVariable @Min(1) Long id,
+            @RequestBody @Valid CertificateDto certificateDto) throws ValidationException {
+        certificateDto.setId(id);
+        certificateDto = certificateService.patch(certificateDto);
         return new ResponseEntity<>(certificateDto, HttpStatus.OK);
     }
 
