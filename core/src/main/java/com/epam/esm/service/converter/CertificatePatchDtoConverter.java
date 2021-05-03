@@ -2,20 +2,18 @@ package com.epam.esm.service.converter;
 
 import com.epam.esm.model.Certificate;
 import com.epam.esm.service.dto.CertificateDto;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-public class CertificatePatchDtoConverter {
-    private final CertificateUpdateDtoConverter certificateConverter;
+public class CertificatePatchDtoConverter implements DtoConverter<Certificate, CertificateDto> {
+    private final CertificateDtoConverter certificateConverter;
 
     public CertificatePatchDtoConverter() {
-        this.certificateConverter = new CertificateUpdateDtoConverter();
+        this.certificateConverter = new CertificateDtoConverter();
     }
 
     public Certificate convertToEntity(CertificateDto certificateDto, Certificate existingCertificate) {
-        Certificate certificateFromRequest = certificateConverter.convertToEntity(certificateDto);
+        Certificate certificateFromRequest = certificateConverter.convertToEntity(certificateDto, new Certificate());
 
         if (certificateFromRequest.getName() != null) {
             existingCertificate.setName(certificateFromRequest.getName());
@@ -32,5 +30,10 @@ public class CertificatePatchDtoConverter {
         existingCertificate.setDateOfModification(LocalDateTime.now());
 
         return existingCertificate;
+    }
+
+    @Override
+    public CertificateDto convertToDto(Certificate certificate) {
+        throw new UnsupportedOperationException("Convert to dto is not permitted");
     }
 }

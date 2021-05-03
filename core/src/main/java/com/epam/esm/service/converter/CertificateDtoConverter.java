@@ -11,13 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CertificateUpdateDtoConverter {
-    private final TagDtoConverter tagDtoConverter;
+public class CertificateDtoConverter implements DtoConverter<Certificate, CertificateDto> {
+    private final DtoConverter<Tag, TagDto> tagDtoConverter;
 
-    public CertificateUpdateDtoConverter() {
+    public CertificateDtoConverter() {
         this.tagDtoConverter = new TagDtoConverter();
     }
 
+    @Override
     public CertificateDto convertToDto(Certificate certificate) {
         List<TagDto> tagDtos = new ArrayList<>();
         if (certificate.getTags() != null) {
@@ -37,22 +38,24 @@ public class CertificateUpdateDtoConverter {
                 .build();
     }
 
-    public Certificate convertToEntity(CertificateDto certificateDto) {
+    @Override
+    public Certificate convertToEntity(CertificateDto certificateDto, Certificate certificate) {
         List<Tag> tags = new ArrayList<>();
         if (certificateDto.getTags() != null) {
             tags = certificateDto.getTags().stream()
-                    .map(tagDtoConverter::convertToEntity)
+                    .map(tagDto -> tagDtoConverter.convertToEntity(tagDto, new Tag()))
                     .collect(Collectors.toList());
         }
-        return Certificate.builder()
-                .id(certificateDto.getId())
-                .dateOfCreation(certificateDto.getDateOfCreation())
-                .dateOfModification(certificateDto.getDateOfModification())
-                .duration(certificateDto.getDuration())
-                .name(certificateDto.getName())
-                .description(certificateDto.getDescription())
-                .price(new Price(certificateDto.getPrice().getCost(), certificateDto.getPrice().getCurrency()))
-                .tags(tags)
-                .build();
+        certificate.setId(certificateDto.getId());
+        certificate.setDateOfCreation(certificateDto.getDateOfCreation());
+        certificate.setDateOfModification(certificateDto.getDateOfModification());
+        certificate.setDuration(certificateDto.getDuration());
+        certificate.setName(certificateDto.getName());
+        certificate.setDescription(certificateDto.getDescription());
+        if (certificateDto.getPrice() != null) {
+            certificate.setPrice(new Price(certificateDto.getPrice().getCost(), certificateDto.getPrice().getCurrency()));
+        }
+        certificate.setTags(tags);
+        return certificate;
     }
 }

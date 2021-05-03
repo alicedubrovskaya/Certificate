@@ -16,24 +16,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Qualifier("validator")
 @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class CertificateValidator implements Validator<CertificateDto> {
+@Qualifier("validator_patch")
+public class CertificatePatchValidator implements Validator<CertificateDto> {
     private final Validator<TagDto> tagValidator;
     private final List<ErrorMessage> errors = new ArrayList<>();
     private static final String COST_CORRECT = "\\d{1,10}\\.\\d{0,4}";
     private static final String COST_COUNT_OF_CHARACTERS_CORRECT = ".{2,10}";
 
     @Autowired
-    public CertificateValidator(Validator<TagDto> tagValidator) {
+    public CertificatePatchValidator(Validator<TagDto> tagValidator) {
         this.tagValidator = tagValidator;
     }
 
-    @Override
     public void validate(CertificateDto certificateDto) {
         validateDto(certificateDto);
         if (errors.isEmpty()) {
-            validateName(certificateDto.getName());
             validateDescription(certificateDto.getDescription());
             validatePrice(certificateDto.getPrice());
             validateDuration(certificateDto.getDuration());
@@ -47,16 +45,6 @@ public class CertificateValidator implements Validator<CertificateDto> {
         }
     }
 
-    protected void validateName(String name) {
-        if (name == null) {
-            errors.add(ErrorMessage.CERTIFICATE_NAME_EMPTY);
-        }
-        if (name != null && !(name.length() > 5 &&
-                name.length() < 255)) {
-            errors.add(ErrorMessage.TAG_NAME_INCORRECT);
-        }
-    }
-
     protected void validateDescription(String description) {
         if (description != null && !(description.length() >= 10 && description.length() <= 400)) {
             errors.add(ErrorMessage.CERTIFICATE_DESCRIPTION_INCORRECT);
@@ -64,8 +52,8 @@ public class CertificateValidator implements Validator<CertificateDto> {
     }
 
     protected void validatePrice(PriceDto priceDto) {
-        if (priceDto != null && priceDto.getCost().toString().matches(COST_CORRECT)
-                && priceDto.getCost().toString().matches(COST_COUNT_OF_CHARACTERS_CORRECT)) {
+        if (priceDto != null && (!priceDto.getCost().toString().matches(COST_CORRECT)
+                || !priceDto.getCost().toString().matches(COST_COUNT_OF_CHARACTERS_CORRECT))) {
             errors.add(ErrorMessage.CERTIFICATE_PRICE_COST_INCORRECT);
         }
     }
@@ -83,7 +71,6 @@ public class CertificateValidator implements Validator<CertificateDto> {
         }
     }
 
-    @Override
     public List<ErrorMessage> getMessages() {
         return errors;
     }

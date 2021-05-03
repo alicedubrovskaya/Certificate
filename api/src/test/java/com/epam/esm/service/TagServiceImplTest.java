@@ -84,7 +84,7 @@ public class TagServiceImplTest {
 
     @Test
     public void shouldCreateTag() throws ValidationException {
-        Mockito.when(converter.convertToEntity(Mockito.any(TagDto.class))).thenReturn(FIRST_TAG);
+//        Mockito.when(converter.convertToEntity(Mockito.any(TagDto.class))).thenReturn(FIRST_TAG);
 //        Mockito.when(repository.create(Mockito.any(Tag.class))).thenReturn(FIRST_TAG);
         Mockito.when(converter.convertToDto(Mockito.any(Tag.class))).thenReturn(FIRST_TAG_DTO);
 

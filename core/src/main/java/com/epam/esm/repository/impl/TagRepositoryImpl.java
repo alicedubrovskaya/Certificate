@@ -28,6 +28,9 @@ public class TagRepositoryImpl implements TagRepository {
     private static final String READ_BY_CERTIFICATE_ID_QUERY = "SELECT `id`, `name` FROM `tag` JOIN tag_gift_certificate tgc " +
             "ON tag.id = tgc.tag_id WHERE `gift_certificate_id` = ?";
 
+    private static final String READ_BY_CERTIFICATE_ID_AND_TAG_ID_QUERY = "SELECT `id`, `name` FROM `tag` JOIN tag_gift_certificate tgc " +
+            "ON tag.id = tgc.tag_id WHERE `gift_certificate_id` = ? AND `tag_id`=?";
+
     private static final String READ_QUERY = "SELECT `id`, `name` FROM `tag`";
 
     private static final String DELETE_QUERY = "DELETE FROM `tag` WHERE `id` = ?";
@@ -38,7 +41,8 @@ public class TagRepositoryImpl implements TagRepository {
         this.tagMapper = tagMapper;
     }
 
-    protected Tag create(Tag tag) {
+    @Override
+    public Tag create(Tag tag) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS);
@@ -73,6 +77,11 @@ public class TagRepositoryImpl implements TagRepository {
     @Override
     public List<Tag> findByCertificateId(Long certificateId) {
         return jdbcTemplate.query(READ_BY_CERTIFICATE_ID_QUERY, tagMapper, certificateId);
+    }
+
+    @Override
+    public List<Tag> isIncludedInCertificate(Long certificateId, Long tagId) {
+        return jdbcTemplate.query(READ_BY_CERTIFICATE_ID_AND_TAG_ID_QUERY, tagMapper, certificateId, tagId);
     }
 
     @Override

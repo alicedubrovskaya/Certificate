@@ -1,6 +1,5 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ public class TagController {
      * @return ResponseEntity which contains created tag with generated id. Response code 200.
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TagDto> createTag(@RequestBody TagDto tagDto) throws ValidationException {
+    public ResponseEntity<TagDto> createTag(@RequestBody TagDto tagDto) {
         tagDto = tagService.create(tagDto);
         return new ResponseEntity<>(tagDto, HttpStatus.OK);
     }
@@ -47,7 +46,8 @@ public class TagController {
      * @return found TagDto. Response code 200.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<TagDto> getTag(@PathVariable("id") @Min(1) Long id) {
+    public ResponseEntity<TagDto> getTag(
+            @PathVariable("id") @Min(value = 1, message = "Id can be more than 0") Long id) {
         TagDto tagDto = tagService.findById(id);
         return new ResponseEntity<>(tagDto, HttpStatus.OK);
     }
@@ -70,7 +70,8 @@ public class TagController {
      * @return Response code 204.
      */
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity deleteTag(@PathVariable @Min(1) Long id) {
+    public ResponseEntity deleteTag(
+            @PathVariable @Min(value = 1, message = "Id can be more than 0") Long id) {
         tagService.delete(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

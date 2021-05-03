@@ -2,6 +2,7 @@ package com.epam.esm.model.enumeration;
 
 public enum ErrorMessage {
     RESOURCE_NOT_FOUND("Requested resource not found"),
+    RESOURCE_ALREADY_EXISTS("Resource already exists"),
 
     EMPTY_PARAMETER("Empty parameter %s"),
     ID_INCORRECT("Incorrect id"),

@@ -5,7 +5,7 @@ import com.epam.esm.model.enumeration.RequestedResource;
 
 import java.util.List;
 
-public class ValidationException extends Exception {
+public class ValidationException extends RuntimeException {
     private List<ErrorMessage> errors;
     RequestedResource requestedResource;
 
