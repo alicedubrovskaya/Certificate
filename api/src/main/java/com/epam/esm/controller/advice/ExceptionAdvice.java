@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.HttpServerErrorException;
 
 import javax.validation.ConstraintViolationException;
 import java.util.List;
@@ -42,9 +43,15 @@ public class ExceptionAdvice {
 
     @ExceptionHandler(value = ResourceAlreadyExistsException.class)
     public ResponseEntity<Object> exception(ResourceAlreadyExistsException e) {
-        ApiException apiException = new ApiException(409, e.getErrorMessage().getType());
-        return new ResponseEntity<>(
-                apiException, new HttpHeaders(), HttpStatus.CONFLICT);
+        ApiException apiException = new ApiException(getErrorCode("400", e.getRequestedResource()),
+                e.getErrorMessage().getType());
+        return new ResponseEntity<>(apiException, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = HttpServerErrorException.InternalServerError.class)
+    public ResponseEntity<Object> exception(HttpServerErrorException.InternalServerError e) {
+        ApiException apiException = new ApiException(500, "Something goes wrong");
+        return new ResponseEntity<>(apiException, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private int getErrorCode(String code, RequestedResource requestedResource) {

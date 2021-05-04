@@ -22,7 +22,7 @@ public class CertificateValidator implements Validator<CertificateDto> {
     private final Validator<TagDto> tagValidator;
     private final List<ErrorMessage> errors = new ArrayList<>();
     private static final String COST_CORRECT = "\\d{1,10}\\.\\d{0,4}";
-    private static final String COST_COUNT_OF_CHARACTERS_CORRECT = ".{2,10}";
+    private static final String COST_COUNT_OF_CHARACTERS_CORRECT = ".{1,10}";
 
     @Autowired
     public CertificateValidator(Validator<TagDto> tagValidator) {
@@ -64,8 +64,15 @@ public class CertificateValidator implements Validator<CertificateDto> {
     }
 
     protected void validatePrice(PriceDto priceDto) {
-        if (priceDto != null && priceDto.getCost().toString().matches(COST_CORRECT)
-                && priceDto.getCost().toString().matches(COST_COUNT_OF_CHARACTERS_CORRECT)) {
+        if (priceDto != null && (priceDto.getCost() == null || priceDto.getCurrency() == null)) {
+            errors.add(ErrorMessage.CERTIFICATE_PRICE_FIELD_EMPTY);
+        }
+
+        if ((priceDto != null && priceDto.getCost() != null && priceDto.getCurrency() != null) &&
+                (!priceDto.getCost().toString().matches(COST_CORRECT) ||
+                        !priceDto.getCost().toString().matches(COST_COUNT_OF_CHARACTERS_CORRECT)
+                )
+        ) {
             errors.add(ErrorMessage.CERTIFICATE_PRICE_COST_INCORRECT);
         }
     }

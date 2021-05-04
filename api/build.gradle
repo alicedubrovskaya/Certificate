@@ -11,9 +11,9 @@ repositories {
     mavenCentral()
 }
 
-//test {
-//    useJUnitPlatform()
-//}
+test {
+    useJUnitPlatform()
+}
 
 dependencies {
     implementation project(':core')

@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,7 +63,7 @@ public class CertificateServiceImpl implements CertificateService {
 
         CertificateDto createdCertificateDto = certificateConverter.convertToDto(createdCertificate);
         createdCertificateDto.setTags(attachTagsToCertificate(createdCertificate.getId(), certificateDto.getTags()));
-        return certificateConverter.convertToDto(createdCertificate);
+        return createdCertificateDto;
     }
 
 
@@ -82,6 +83,7 @@ public class CertificateServiceImpl implements CertificateService {
         DtoConverter<Certificate, CertificateDto> certificateConverter = new CertificateDtoConverter();
         Certificate certificateForUpdate = certificateConverter.convertToEntity(certificateDto, new Certificate());
         certificateRepository.update(certificateForUpdate);
+        certificateForUpdate.setDateOfModification(LocalDateTime.now());
         certificateRepository.detachTagsFromCertificate(certificateDto.getId());
         List<TagDto> attachedTags = attachTagsToCertificate(certificateDto.getId(), certificateDto.getTags());
         DtoConverter<Tag, TagDto> tagConverter = new TagDtoConverter();
@@ -108,6 +110,7 @@ public class CertificateServiceImpl implements CertificateService {
         CertificatePatchDtoConverter converter = new CertificatePatchDtoConverter();
         Certificate certificateForUpdate = converter.convertToEntity(certificateDto, existingCertificate);
         certificateRepository.update(certificateForUpdate);
+        certificateForUpdate.setDateOfModification(LocalDateTime.now());
 
         DtoConverter<Tag, TagDto> tagConverter = new TagDtoConverter();
         if (!certificateDto.getTags().isEmpty()) {

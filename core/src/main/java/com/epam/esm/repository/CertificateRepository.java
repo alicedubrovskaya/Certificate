@@ -13,11 +13,11 @@ public interface CertificateRepository {
 
     List<Certificate> findAll(CertificateSpecification specification);
 
-    void delete(Long id);
+    boolean delete(Long id);
 
     void update(Certificate certificate);
 
-    void attachTagToCertificate(Long certificateId, Long tagId);
+    boolean attachTagToCertificate(Long certificateId, Long tagId);
 
-    void detachTagsFromCertificate(Long certificateId);
+    boolean detachTagsFromCertificate(Long certificateId);
 }

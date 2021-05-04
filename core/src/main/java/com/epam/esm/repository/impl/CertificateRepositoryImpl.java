@@ -14,7 +14,6 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,21 +23,21 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     private final CertificateMapper certificateMapper;
 
     private static final String CREATE_QUERY =
-            "INSERT INTO `gift_certificate` (name, description, cost, currency, duration, create_date, last_update_date) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?);";
+            "INSERT INTO gift_certificate (name, description, cost, currency, duration, create_date, last_update_date) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     private static final String READ_QUERY = "SELECT id, name, description, cost, currency, duration, create_date, last_update_date" +
             " FROM gift_certificate WHERE id=?";
 
-    private static final String UPDATE_QUERY = "UPDATE `gift_certificate` SET name=?,description=?, cost=?," +
+    private static final String UPDATE_QUERY = "UPDATE gift_certificate SET name=?,description=?, cost=?," +
             " currency=?, duration=?, last_update_date=? WHERE id=?";
 
-    private static final String ATTACH_TAG_QUERY = "INSERT INTO `tag_gift_certificate` (tag_id, gift_certificate_id)" +
+    private static final String ATTACH_TAG_QUERY = "INSERT INTO tag_gift_certificate (tag_id, gift_certificate_id)" +
             " VALUES (?,?)";
 
-    private static final String DETACH_TAG_QUERY = "DELETE FROM `tag_gift_certificate` WHERE gift_certificate_id=?";
+    private static final String DETACH_TAG_QUERY = "DELETE FROM tag_gift_certificate WHERE gift_certificate_id=?";
 
-    private static final String DELETE_QUERY = "DELETE FROM `gift_certificate` WHERE `id`=? ";
+    private static final String DELETE_QUERY = "DELETE FROM gift_certificate WHERE id=? ";
 
     @Autowired
     protected CertificateRepositoryImpl(JdbcTemplate jdbcTemplate, CertificateMapper certificateMapper) {
@@ -48,6 +47,8 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
     @Override
     public Certificate create(Certificate certificate) {
+        certificate.setDateOfCreation(LocalDateTime.now());
+        certificate.setDateOfModification(LocalDateTime.now());
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS);
@@ -61,7 +62,12 @@ public class CertificateRepositoryImpl implements CertificateRepository {
             preparedStatement.setTimestamp(index, Timestamp.valueOf(LocalDateTime.now()));
             return preparedStatement;
         }, keyHolder);
-        certificate.setId(keyHolder.getKey().longValue());
+        if (keyHolder.getKeys().size() > 1) {
+            Object integer = keyHolder.getKeys().get("id");
+            certificate.setId(Long.valueOf(integer.toString()));
+        } else {
+            certificate.setId(keyHolder.getKey().longValue());
+        }
         return certificate;
     }
 
@@ -72,12 +78,12 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
     @Override
     public List<Certificate> findAll(CertificateSpecification certificateSpecification) {
-        return new LinkedList<>(jdbcTemplate.query(certificateSpecification.buildSql(), certificateMapper));
+        return jdbcTemplate.query(certificateSpecification.buildSql(), certificateMapper);
     }
 
     @Override
-    public void delete(Long id) {
-        jdbcTemplate.update(DELETE_QUERY, id);
+    public boolean delete(Long id) {
+        return jdbcTemplate.update(DELETE_QUERY, id) != 0;
     }
 
     @Override
@@ -89,12 +95,12 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     }
 
     @Override
-    public void attachTagToCertificate(Long certificateId, Long tagId) {
-        jdbcTemplate.update(ATTACH_TAG_QUERY, tagId, certificateId);
+    public boolean attachTagToCertificate(Long certificateId, Long tagId) {
+        return jdbcTemplate.update(ATTACH_TAG_QUERY, tagId, certificateId) != 0;
     }
 
     @Override
-    public void detachTagsFromCertificate(Long certificateId) {
-        jdbcTemplate.update(DETACH_TAG_QUERY, certificateId);
+    public boolean detachTagsFromCertificate(Long certificateId) {
+        return jdbcTemplate.update(DETACH_TAG_QUERY, certificateId) != 0;
     }
 }

@@ -39,9 +39,9 @@ public class CertificateSpecification {
     private void addWherePart(StringBuilder sql) {
         sql.append(WHERE + "TRUE ");
         if (tagName != null) {
-            sql.append(AND + TAG_NAME_FILTER)
+            sql.append(AND + TAG_NAME_FILTER + "'")
                     .append(tagName)
-                    .append(") ");
+                    .append("') ");
         }
         if (certificateName != null) {
             sql.append(AND + "name " + LIKE)

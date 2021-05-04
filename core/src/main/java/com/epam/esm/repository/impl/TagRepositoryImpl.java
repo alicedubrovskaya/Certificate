@@ -23,17 +23,17 @@ public class TagRepositoryImpl implements TagRepository {
 
     private static final String READ_BY_ID_QUERY = "SELECT id, name FROM tag WHERE id = ?";
 
-    private static final String READ_BY_NAME_QUERY = "SELECT `id`, `name` FROM `tag` WHERE `name` = ?";
+    private static final String READ_BY_NAME_QUERY = "SELECT id, name FROM tag WHERE name = ?";
 
-    private static final String READ_BY_CERTIFICATE_ID_QUERY = "SELECT `id`, `name` FROM `tag` JOIN tag_gift_certificate tgc " +
-            "ON tag.id = tgc.tag_id WHERE `gift_certificate_id` = ?";
+    private static final String READ_BY_CERTIFICATE_ID_QUERY = "SELECT id, name FROM tag JOIN tag_gift_certificate tgc " +
+            "ON tag.id = tgc.tag_id WHERE gift_certificate_id = ?";
 
-    private static final String READ_BY_CERTIFICATE_ID_AND_TAG_ID_QUERY = "SELECT `id`, `name` FROM `tag` JOIN tag_gift_certificate tgc " +
-            "ON tag.id = tgc.tag_id WHERE `gift_certificate_id` = ? AND `tag_id`=?";
+    private static final String READ_BY_CERTIFICATE_ID_AND_TAG_ID_QUERY = "SELECT id, name FROM tag JOIN tag_gift_certificate tgc " +
+            "ON tag.id = tgc.tag_id WHERE gift_certificate_id = ? AND tag_id=?";
 
-    private static final String READ_QUERY = "SELECT `id`, `name` FROM `tag`";
+    private static final String READ_QUERY = "SELECT id, name FROM tag";
 
-    private static final String DELETE_QUERY = "DELETE FROM `tag` WHERE `id` = ?";
+    private static final String DELETE_QUERY = "DELETE FROM tag WHERE id = ?";
 
     @Autowired
     protected TagRepositoryImpl(JdbcTemplate jdbcTemplate, TagMapper tagMapper) {

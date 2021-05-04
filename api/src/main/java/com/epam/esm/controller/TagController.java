@@ -31,12 +31,12 @@ public class TagController {
      * Creates tag if it doesn't exist , otherwise returns already existing tag
      *
      * @param tagDto should be valid. Otherwise, tag will not be created.
-     * @return ResponseEntity which contains created tag with generated id. Response code 200.
+     * @return ResponseEntity which contains created tag with generated id. Response code 201.
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TagDto> createTag(@RequestBody TagDto tagDto) {
         tagDto = tagService.create(tagDto);
-        return new ResponseEntity<>(tagDto, HttpStatus.OK);
+        return new ResponseEntity<>(tagDto, HttpStatus.CREATED);
     }
 
     /**
