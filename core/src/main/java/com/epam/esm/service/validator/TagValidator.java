@@ -23,13 +23,13 @@ public class TagValidator implements Validator<TagDto> {
         }
     }
 
-    protected void validateDto(TagDto tagDto) {
+    public void validateDto(TagDto tagDto) {
         if (tagDto == null) {
             errors.add(ErrorMessage.TAG_DTO_EMPTY);
         }
     }
 
-    protected void validateName(String name) {
+    public void validateName(String name) {
         if (name == null) {
             errors.add(ErrorMessage.TAG_NAME_EMPTY);
         }

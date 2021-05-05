@@ -92,6 +92,6 @@ public class CertificateRepositoryTest {
                 new SearchCertificateDto("relax", null, null,
                         null, null))
         );
-        Assertions.assertEquals(actualCertificates.size(), 1);
+        Assertions.assertEquals(1, actualCertificates.size());
     }
 }

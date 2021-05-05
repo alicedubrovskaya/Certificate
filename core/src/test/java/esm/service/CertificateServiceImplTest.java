@@ -10,9 +10,9 @@ import com.epam.esm.service.converter.DtoConverter;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.service.impl.CertificateServiceImpl;
 import com.epam.esm.service.validator.Validator;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -64,9 +64,9 @@ public class CertificateServiceImplTest {
     @Mock
     private Validator<CertificateDto> validator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -75,13 +75,13 @@ public class CertificateServiceImplTest {
         Mockito.when(converter.convertToDto(Mockito.any(Certificate.class))).thenReturn(FIRST_CERTIFICATE_DTO);
         Mockito.when(tagRepository.findByCertificateId(1L)).thenReturn(null);
         CertificateDto certificateDto = service.findById(1L);
-        Assert.assertEquals(FIRST_CERTIFICATE_DTO, certificateDto);
+        Assertions.assertEquals(FIRST_CERTIFICATE_DTO, certificateDto);
     }
 
-    @Test(expected = ResourceNotFoundException.class)
+    @Test
     public void shouldNotGetById() {
         Mockito.when(repository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
-        service.findById(1L);
+        Assertions.assertThrows(ResourceNotFoundException.class, () ->  service.findById(1L));
     }
 
     @Test
@@ -92,10 +92,10 @@ public class CertificateServiceImplTest {
         verify(repository).delete(1L);
     }
 
-    @Test(expected = ResourceNotFoundException.class)
+    @Test
     public void shouldNotDeleteById() {
         Mockito.when(repository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
-        service.delete(6L);
+        Assertions.assertThrows(ResourceNotFoundException.class, () ->  service.delete(6L));
     }
 
     @Test
@@ -105,12 +105,12 @@ public class CertificateServiceImplTest {
         Mockito.when(converter.convertToDto(Mockito.any(Certificate.class))).thenReturn(FIRST_CERTIFICATE_DTO);
 
         CertificateDto certificateDto = service.create(FIRST_CERTIFICATE_DTO);
-        Assert.assertEquals(FIRST_CERTIFICATE_DTO, certificateDto);
+        Assertions.assertEquals(FIRST_CERTIFICATE_DTO, certificateDto);
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void shouldNotCreate() throws ValidationException {
         Mockito.when(validator.getMessages()).thenReturn(errorMessages);
-        service.create(FIRST_CERTIFICATE_DTO);
+        Assertions.assertThrows(ValidationException.class, () ->  service.create(FIRST_CERTIFICATE_DTO));
     }
 }

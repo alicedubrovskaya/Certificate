@@ -9,9 +9,9 @@ import com.epam.esm.service.converter.DtoConverter;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.service.impl.TagServiceImpl;
 import com.epam.esm.service.validator.Validator;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -44,9 +44,9 @@ public class TagServiceImplTest {
     @Mock
     private Validator<TagDto> validator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -54,13 +54,13 @@ public class TagServiceImplTest {
         Mockito.when(repository.findById(Mockito.anyLong())).thenReturn(Optional.of(FIRST_TAG));
         Mockito.when(converter.convertToDto(Mockito.any(Tag.class))).thenReturn(FIRST_TAG_DTO);
         TagDto tagDto = service.findById(1L);
-        Assert.assertEquals(FIRST_TAG_DTO, tagDto);
+        Assertions.assertEquals(FIRST_TAG_DTO, tagDto);
     }
 
-    @Test(expected = ResourceNotFoundException.class)
+    @Test
     public void shouldNotGetById() {
         Mockito.when(repository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
-        service.findById(1L);
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.findById(1L));
     }
 
     @Test
@@ -71,11 +71,10 @@ public class TagServiceImplTest {
         verify(repository).delete(1L);
     }
 
-
-    @Test(expected = ResourceNotFoundException.class)
+    @Test
     public void shouldNotDeleteTagById() {
         Mockito.when(repository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
-        service.delete(6L);
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.findById(1L));
     }
 
     @Test
@@ -91,12 +90,12 @@ public class TagServiceImplTest {
         Mockito.when(converter.convertToDto(Mockito.any(Tag.class))).thenReturn(FIRST_TAG_DTO);
 
         TagDto tagDto = service.create(FIRST_TAG_DTO);
-        Assert.assertEquals(FIRST_TAG_DTO, tagDto);
+        Assertions.assertEquals(FIRST_TAG_DTO, tagDto);
     }
 
-    @Test(expected = ValidationException.class)
-    public void shouldNotCreateTag() throws ValidationException {
+    @Test
+    public void shouldNotCreateTag() {
         Mockito.when(validator.getMessages()).thenReturn(errorMessages);
-        service.create(SECOND_TAG_DTO);
+        Assertions.assertThrows(ValidationException.class, () -> service.create(SECOND_TAG_DTO));
     }
 }

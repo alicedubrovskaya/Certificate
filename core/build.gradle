@@ -8,10 +8,10 @@ version '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
 }
-//
-//test {
-//    useJUnitPlatform()
-//}
+
+test {
+    useJUnitPlatform()
+}
 
 dependencies {
     implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.4'

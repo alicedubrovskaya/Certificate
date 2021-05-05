@@ -32,6 +32,7 @@ public class CertificatePatchValidator implements Validator<CertificateDto> {
     public void validate(CertificateDto certificateDto) {
         validateDto(certificateDto);
         if (errors.isEmpty()) {
+            validateName(certificateDto.getName());
             validateDescription(certificateDto.getDescription());
             validatePrice(certificateDto.getPrice());
             validateDuration(certificateDto.getDuration());
@@ -39,32 +40,45 @@ public class CertificatePatchValidator implements Validator<CertificateDto> {
         }
     }
 
-    protected void validateDto(CertificateDto certificateDto) {
+    public void validateName(String name) {
+        if (name != null && !(name.length() > 5 && name.length() < 255)) {
+            errors.add(ErrorMessage.CERTIFICATE_NAME_INCORRECT);
+        }
+    }
+
+    public void validateDto(CertificateDto certificateDto) {
         if (certificateDto == null) {
             errors.add(ErrorMessage.CERTIFICATE_DTO_EMPTY);
         }
     }
 
-    protected void validateDescription(String description) {
+    public void validateDescription(String description) {
         if (description != null && !(description.length() >= 10 && description.length() <= 400)) {
             errors.add(ErrorMessage.CERTIFICATE_DESCRIPTION_INCORRECT);
         }
     }
 
-    protected void validatePrice(PriceDto priceDto) {
-        if (priceDto != null && (!priceDto.getCost().toString().matches(COST_CORRECT)
-                || !priceDto.getCost().toString().matches(COST_COUNT_OF_CHARACTERS_CORRECT))) {
+    public void validatePrice(PriceDto priceDto) {
+        if (priceDto != null && (priceDto.getCost() == null || priceDto.getCurrency() == null)) {
+            errors.add(ErrorMessage.CERTIFICATE_PRICE_FIELD_EMPTY);
+        }
+
+        if ((priceDto != null && priceDto.getCost() != null && priceDto.getCurrency() != null) &&
+                (!priceDto.getCost().toString().matches(COST_CORRECT) ||
+                        !priceDto.getCost().toString().matches(COST_COUNT_OF_CHARACTERS_CORRECT)
+                )
+        ) {
             errors.add(ErrorMessage.CERTIFICATE_PRICE_COST_INCORRECT);
         }
     }
 
-    protected void validateDuration(Duration duration) {
+    public void validateDuration(Duration duration) {
         if (duration != null && duration.toDays() <= 0) {
             errors.add(ErrorMessage.CERTIFICATE_DURATION_INCORRECT);
         }
     }
 
-    protected void validateTags(List<TagDto> tags) {
+    public void validateTags(List<TagDto> tags) {
         if (tags != null) {
             tags.forEach(tagValidator::validate);
             errors.addAll(tagValidator.getMessages());
