@@ -41,13 +41,13 @@ public class CertificateValidator implements Validator<CertificateDto> {
         }
     }
 
-    public void validateDto(CertificateDto certificateDto) {
+    protected void validateDto(CertificateDto certificateDto) {
         if (certificateDto == null) {
             errors.add(ErrorMessage.CERTIFICATE_DTO_EMPTY);
         }
     }
 
-    public void validateName(String name) {
+    protected void validateName(String name) {
         if (name == null) {
             errors.add(ErrorMessage.CERTIFICATE_NAME_EMPTY);
         }
@@ -57,13 +57,13 @@ public class CertificateValidator implements Validator<CertificateDto> {
         }
     }
 
-    public void validateDescription(String description) {
+    protected void validateDescription(String description) {
         if (description != null && !(description.length() >= 10 && description.length() <= 400)) {
             errors.add(ErrorMessage.CERTIFICATE_DESCRIPTION_INCORRECT);
         }
     }
 
-    public void validatePrice(PriceDto priceDto) {
+    protected void validatePrice(PriceDto priceDto) {
         if (priceDto != null && (priceDto.getCost() == null || priceDto.getCurrency() == null)) {
             errors.add(ErrorMessage.CERTIFICATE_PRICE_FIELD_EMPTY);
         }
@@ -77,13 +77,13 @@ public class CertificateValidator implements Validator<CertificateDto> {
         }
     }
 
-    public void validateDuration(Duration duration) {
+    protected void validateDuration(Duration duration) {
         if (duration != null && duration.toDays() <= 0) {
             errors.add(ErrorMessage.CERTIFICATE_DURATION_INCORRECT);
         }
     }
 
-    public void validateTags(List<TagDto> tags) {
+    protected void validateTags(List<TagDto> tags) {
         if (tags != null) {
             tags.forEach(tagValidator::validate);
             errors.addAll(tagValidator.getMessages());

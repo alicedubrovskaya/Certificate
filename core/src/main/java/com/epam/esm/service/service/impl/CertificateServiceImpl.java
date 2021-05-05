@@ -149,7 +149,6 @@ public class CertificateServiceImpl implements CertificateService {
         if (!searchCertificateDtoValidator.getMessages().isEmpty()) {
             throw new ValidationException(searchCertificateDtoValidator.getMessages(), RequestedResource.CERTIFICATE);
         }
-
         List<Certificate> certificates = certificateRepository.findAll(new CertificateSpecification(searchCertificateDto));
         certificates.forEach(certificate -> certificate.setTags(
                 tagRepository.findByCertificateId(certificate.getId())));

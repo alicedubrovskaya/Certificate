@@ -5,8 +5,8 @@ import com.epam.esm.model.enumeration.ErrorMessage;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.PriceDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.validator.CertificatePatchValidator;
 import com.epam.esm.service.validator.TagValidator;
+import esm.service.validator.extension.CertificateValidatorForTesting;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,10 +21,10 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-public class CertificateValidatorTest {
+class CertificateValidatorTest {
 
     @InjectMocks
-    private CertificatePatchValidator certificateValidator;
+    private CertificateValidatorForTesting certificateValidator;
 
     @Mock
     private TagValidator tagValidator;
@@ -50,59 +50,64 @@ public class CertificateValidatorTest {
     }
 
     @Test
-    public void validateTest() {
+    void validateTest() {
         certificateValidator.validate(FIRST_CERTIFICATE_DTO);
         Assertions.assertEquals(0, certificateValidator.getMessages().size());
     }
 
     @Test
-    public void validateNullDtoTest() {
+    void validateNullDtoTest() {
         certificateValidator.validate(null);
         Assertions.assertTrue(certificateValidator.getMessages().contains(ErrorMessage.CERTIFICATE_DTO_EMPTY));
     }
 
     @Test
-    public void validateIncorrectNameTest() {
+    void validateIncorrectNameTest() {
         certificateValidator.validateName(INCORRECT_NAME);
         Assertions.assertTrue(certificateValidator.getMessages().contains(ErrorMessage.CERTIFICATE_NAME_INCORRECT));
     }
 
     @Test
-    public void validateIncorrectDescriptionTest() {
+    void validateNullNameTest() {
+        certificateValidator.validateName(null);
+        Assertions.assertTrue(certificateValidator.getMessages().contains(ErrorMessage.CERTIFICATE_NAME_EMPTY));
+    }
+
+    @Test
+    void validateIncorrectDescriptionTest() {
         certificateValidator.validateDescription(INCORRECT_DESCRIPTION);
         Assertions.assertTrue(certificateValidator.getMessages().contains(ErrorMessage.CERTIFICATE_DESCRIPTION_INCORRECT));
     }
 
     @Test
-    public void validateNullDescriptionTest() {
+    void validateNullDescriptionTest() {
         certificateValidator.validateDescription(null);
         Assertions.assertEquals(0, certificateValidator.getMessages().size());
     }
 
     @Test
-    public void validatePriceWithEmptyFieldTest() {
+    void validatePriceWithEmptyFieldTest() {
         certificateValidator.validatePrice(PRICE_WITH_EMPTY_FIELD);
         Assertions.assertTrue(certificateValidator.getMessages().contains(ErrorMessage.CERTIFICATE_PRICE_FIELD_EMPTY));
     }
 
     @Test
-    public void validatePriceWithIncorrectCostTest() {
+    void validatePriceWithIncorrectCostTest() {
         certificateValidator.validatePrice(PRICE_WITH_INCORRECT_COST);
         Assertions.assertTrue(certificateValidator.getMessages().contains(ErrorMessage.CERTIFICATE_PRICE_COST_INCORRECT));
     }
 
     @Test
-    public void validateIncorrectDurationTest() {
+    void validateIncorrectDurationTest() {
         certificateValidator.validateDuration(INCORRECT_DURATION);
         Assertions.assertTrue(certificateValidator.getMessages().contains(ErrorMessage.CERTIFICATE_DURATION_INCORRECT));
     }
 
     @Test
-    public void validateEmptyTagsTest() {
+    void validateEmptyTagsTest() {
         Mockito.when(tagValidator.getMessages()).thenReturn(Arrays.asList(
                 ErrorMessage.TAG_DTO_EMPTY, ErrorMessage.TAG_DTO_EMPTY));
         certificateValidator.validateTags(EMPTY_TAGS_DTO);
         Assertions.assertEquals(2, certificateValidator.getMessages().size());
     }
-
 }

@@ -2,6 +2,7 @@ package com.epam.esm.controller;
 
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.SearchCertificateDto;
+import com.epam.esm.service.parser.SearchParamsParser;
 import com.epam.esm.service.service.CertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The class provides certificate operations
@@ -43,15 +45,21 @@ public class CertificateController {
 
     /**
      * Gets filtered certificates
-     *
-     * @param searchCertificateDto
+     * @param searchParams
      * @return found certificates. Response code 200.
      */
-    @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
     public ResponseEntity<List<CertificateDto>> getGiftCertificates(
-            @RequestBody SearchCertificateDto searchCertificateDto) {
+            @RequestParam Map<String, String> searchParams) {
+        SearchCertificateDto searchCertificateDto = SearchCertificateDto.builder()
+                .tagName(searchParams.get("tag"))
+                .certificateName(searchParams.get("certificateName"))
+                .description(searchParams.get("certificateDescription"))
+                .fieldsToSortBy(searchParams.get("fieldsToSortBy"))
+                .sortOrders(searchParams.get("sortOrders"))
+                .build();
         List<CertificateDto> certificates = certificateService.findAllByParams(searchCertificateDto);
-        return new ResponseEntity<>(certificates, HttpStatus.OK);
+        return new ResponseEntity<>(certificates,HttpStatus.OK);
     }
 
     /**

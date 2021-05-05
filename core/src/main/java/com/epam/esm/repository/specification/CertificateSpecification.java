@@ -2,16 +2,19 @@ package com.epam.esm.repository.specification;
 
 import com.epam.esm.model.enumeration.SortOrder;
 import com.epam.esm.service.dto.SearchCertificateDto;
+import com.epam.esm.service.parser.SearchParamsParser;
 
 import java.util.List;
+import java.util.Map;
 
 public class CertificateSpecification {
+    private final SearchParamsParser parser = new SearchParamsParser();
 
     private final String tagName;
     private final String certificateName;
     private final String certificateDescription;
     private final List<String> fieldsToSortBy;
-    private final SortOrder sortOrder;
+    private final Map<String, SortOrder> sortOrders;
 
     private static final String LIKE = "LIKE '%";
     private static final String WHERE = "WHERE ";
@@ -25,8 +28,8 @@ public class CertificateSpecification {
         this.tagName = searchCertificateDto.getTagName();
         this.certificateName = searchCertificateDto.getCertificateName();
         this.certificateDescription = searchCertificateDto.getDescription();
-        this.fieldsToSortBy = searchCertificateDto.getFieldsToSortBy();
-        this.sortOrder = searchCertificateDto.getSortOrder();
+        this.fieldsToSortBy = parser.parseFieldsToSortBy(searchCertificateDto.getFieldsToSortBy());
+        this.sortOrders = parser.parseSortOrders(searchCertificateDto.getSortOrders());
     }
 
     public String buildSql() {
@@ -56,26 +59,20 @@ public class CertificateSpecification {
     }
 
     private void addSortPart(StringBuilder sql) {
-        String sortOrderForFields = getSortOrder(sortOrder);
         if (fieldsToSortBy != null && !fieldsToSortBy.isEmpty()) {
             sql.append(ORDER_BY);
+            SortOrder sortOrder;
+            String fieldToSortBy;
             for (int i = 0; i < fieldsToSortBy.size(); i++) {
-                sql.append(fieldsToSortBy.get(i))
+                fieldToSortBy = fieldsToSortBy.get(i);
+                sortOrder = sortOrders.getOrDefault(fieldToSortBy, SortOrder.ASC);
+                sql.append(fieldToSortBy)
                         .append(" ")
-                        .append(sortOrderForFields);
+                        .append(sortOrder);
                 if (i < fieldsToSortBy.size() - 1) {
                     sql.append(", ");
                 }
             }
         }
-    }
-
-    private String getSortOrder(SortOrder sortOrder) {
-        if (sortOrder == null || sortOrder.equals(SortOrder.ASC)) {
-            return SortOrder.ASC.getType();
-        } else {
-            return SortOrder.DESC.getType();
-        }
-
     }
 }
