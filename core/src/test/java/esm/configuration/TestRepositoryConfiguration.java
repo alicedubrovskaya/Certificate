@@ -1,4 +1,4 @@
-package com.epam.esm.configuration;
+package esm.configuration;
 
 import com.opentable.db.postgres.embedded.EmbeddedPostgres;
 import org.flywaydb.core.Flyway;

@@ -26,16 +26,20 @@ public class CertificateDtoConverter implements DtoConverter<Certificate, Certif
                     .map(tagDtoConverter::convertToDto)
                     .collect(Collectors.toList());
         }
-        return CertificateDto.builder()
+        CertificateDto certificateDto = CertificateDto.builder()
                 .id(certificate.getId())
                 .dateOfCreation(certificate.getDateOfCreation())
                 .dateOfModification(certificate.getDateOfModification())
                 .duration(certificate.getDuration())
                 .name(certificate.getName())
                 .description(certificate.getDescription())
-                .price(new PriceDto(certificate.getPrice().getCost(), certificate.getPrice().getCurrency()))
                 .tags(tagDtos)
                 .build();
+        if (certificate.getPrice() != null) {
+            certificateDto.setPrice(
+                    new PriceDto(certificate.getPrice().getCost(), certificate.getPrice().getCurrency()));
+        }
+        return certificateDto;
     }
 
     @Override

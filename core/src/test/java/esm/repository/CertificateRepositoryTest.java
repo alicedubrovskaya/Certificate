@@ -1,11 +1,12 @@
-package com.epam.esm.repository;
+package esm.repository;
 
-import com.epam.esm.configuration.TestRepositoryConfiguration;
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Price;
 import com.epam.esm.model.enumeration.Currency;
+import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.specification.CertificateSpecification;
 import com.epam.esm.service.dto.SearchCertificateDto;
+import esm.configuration.TestRepositoryConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Duration;
